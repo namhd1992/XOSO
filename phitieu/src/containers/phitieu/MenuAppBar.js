@@ -90,36 +90,11 @@ class MenuAppBar extends React.Component {
 			}
 		} else {
 			this.setState({ auth: false });
-			var code = Ultilities.parse_query_string("code", window.location.href);
+			var code = Ultilities.parse_query_string("auth-code", window.location.href);
 			var fb_mess = Ultilities.parse_query_string("fbmessid", window.location.href);
 			var currentPath=localStorage.getItem("currentPath");
 			if (code != null) {
-				if (fb_mess === null) {
-					var url = Ultilities.base_url() + "darts/user-signin/";
-					var header = {
-						headers: {
-							"Content-Type": "application/text",
-							"auth-code": code,
-						}
-					}
-					axios.get(url, header).then(function (response) {
-						console.log(response)
-						var user_save = response.data;
-						user_save.expired = new Date();
-						localStorage.setItem("user", JSON.stringify(user_save));
-						_this.setState({ user: response.data.data });
-						window.location.replace(`${window.location.protocol}//${window.location.host}${currentPath}`);
-						// _this.props.getData(user_save.access_token, user_save.scoinAccessToken).then(function () {
-						// 	window.location.replace(`${window.location.protocol}//${window.location.host}`);
-						// });
-					}).catch(function (error) {
-						_this.props.setStatusServer();
-						localStorage.removeItem("user");
-						localStorage.removeItem("userInfo");
-						_this.setState({ auth: false });
-					})
-				} else {
-					var url = Ultilities.base_url() + "darts/user-signin/";
+				var url = Ultilities.base_url() + "darts/user-vtvcab-join";
 					var header = {
 						headers: {
 							"Content-Type": "application/text",
@@ -145,7 +120,6 @@ class MenuAppBar extends React.Component {
 						localStorage.removeItem("userInfo");
 						_this.setState({ auth: false });
 					})
-				}
 			}
 		}
 	}
