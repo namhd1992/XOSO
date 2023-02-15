@@ -14,8 +14,8 @@ html {scroll-behavior: smooth; font-size: 26px; font-family:Arial, Helvetica, sa
 .login {position: absolute; top: 0; right: 30px; height: 70px; width: 200px; z-index:10}
 .bg-bottom {background:url(../images/bgw-bottom.png) no-repeat; background-position: bottom; background-size: 100%; display: block; }
 .btn-s {padding-top: 46%; width:100%; text-align: center;}
-.menu-left {position: absolute; left: 1%; top: 8%; background:url(../images/btn-ahgl.png) no-repeat; background-size: 100%; width: 200px; height: 280px;}
-.menu-left p.menu-link {width: 100%; height: 18%; margin-top: 2%;}
+.menu-left {position: absolute; left: 1%; top: 8%; background:url(../images/btn-ahgl.png) no-repeat; background-size: 100%; width: 200px; height: 150px;}
+.menu-left p.menu-link {width: 100%; height: 48%; margin-top: 2%;}
 .menu-left p.menu-link.link-first {margin-top: 12%}
 .menu-right {position: absolute; right: 1%; top: 10%; width: 160px; height: 90px;}
 .bxh { padding-top: 8%; width: 768px;}
@@ -25,7 +25,7 @@ html {scroll-behavior: smooth; font-size: 26px; font-family:Arial, Helvetica, sa
 .bg-border-bottom {border-bottom: solid 1px #712400}
 .bg-border-right {background-image: url(../images/bg-border-right.png); background-repeat: no-repeat; background-position: right bottom; background-size: 1%;}
 .w-33 {width: 33%; overflow: hidden; white-space:nowrap; text-overflow: ellipsis;}
-.w-25 {overflow: hidden; white-space:nowrap; text-overflow: ellipsis;}
+/* .w-25 {overflow: hidden; white-space:nowrap; text-overflow: ellipsis;} */
 .btn-h { width:100%; text-align: center;}
 .pt-3vw {padding-top: 2%;}
 
@@ -50,7 +50,8 @@ html {scroll-behavior: smooth; font-size: 26px; font-family:Arial, Helvetica, sa
 .border-giaithuong-e {border: solid 1px #f69310; border-radius: 8px}
 .scroll-modal-body {height: 600px !important; overflow: auto;}
 .img-dacochu {position: absolute; top: 30%; left: 35%}
-.modal-tudo {background:url(../images/bg-popup-tudo.png) no-repeat; background-position: top; background-size: contain; display: block; width: 100%; height: 100%}
+.modal-tudo.modal-dialog-scrollable .modal-content{max-height: 580px !important;}
+.modal-tudo {background:url(../images/bg-popup-tudo.png) no-repeat; background-position: top; background-size: contain; display: block; width: 650px; height: 650px; min-width: 650px; min-height: 650px;}
 .valign-middle {vertical-align: middle !important;}
 .pag-custom .page-item {margin: 5px;}
 .pag-custom .page-link {background-color: #fcc316; border-color: #fcc316; border-radius: 4px; color:#FFFFFF; font-size:13px; padding: 2px 10px}
@@ -60,16 +61,41 @@ html {scroll-behavior: smooth; font-size: 26px; font-family:Arial, Helvetica, sa
 .phitieu .img-phitieu {background:url(../images/tieu.png) no-repeat; background-position: top; background-size: contain; display: block; width: 100%; height: 100%} */
 .tooltip {font-size: 14px !important;}
 .modal-dialog-md {max-width: 650px !important;}
-.modal-giaithuong {background:url(../images/bg-popup-thongbao.png) no-repeat; background-position: top; background-size: contain; display: block; width: 650px !important; height: 650px !important; max-width: 650px !important; }
+.modal-giaithuong {background:url(../images/bg-popup-giaithuong.png) no-repeat; background-position: top; background-size: contain; display: block; width: 650px !important; height: 650px !important; max-width: 650px !important; }
 .modal-dialog-scrollable.modal-giaithuong .modal-content {max-height: 600px !important;}
 
 .bg-chucmung {background-image: url(../images/bg-chucmung.png); background-repeat: no-repeat; background-position: center; background-size: 100%; width: 480px; margin: 0 auto;}
-.content-chucmung {width: 260px; height: 350px; padding-top: 85px;}
+.content-chucmung {width: 260px; height: 350px; padding-top: 85px !important;}
 .text-chucmung {border-radius: 4px; padding: 8px 0;}
 
+.modal-huongdan {background:url(../images/bg-popup-huongdan.png) no-repeat; background-position: top; background-size: 100%; display: block; width: 650px; height: 650px; max-width: 650px; min-height: 650px;}
+.modal-huongdan.modal-dialog-scrollable .modal-content {max-height: 650px;}
+.modal-moqua {background:url(../images/bg-popup-moqua.png) no-repeat; background-position: top; background-size: contain; display: block; width: 100%; height: 100%;}
+.modal-tangtieu {background:url(../images/bg-popup-tangtieu.png) no-repeat; background-position: top; background-size: 100%; display: block; width: 100%; height: 100%}
+.modal-chonroom {background:url(../images/bg-popup-chonroom.png) no-repeat; background-position: top; background-size: 100%; display: block; width: 650px; height: 650px; max-width: 650px; min-height: 650px;}
+.modal-chonroom.modal-dialog-scrollable .modal-content {max-height: 650px;}
 
-
+/* Popover Body */
+.popover-body {font-size: 14px; padding: 10px !important; color:#FFFFFF !important; animation: blinker 1.5s linear infinite;}
+.popover {background-color: #D90000 !important; z-index:100;top:50px !important}
+.popover.top .arrow:after{background-color: #D90000 !important;}
+.bs-popover-top .arrow::after, .bs-popover-auto[x-placement^="top"] .arrow::after {
+  border-top-color: #D90000 !important; }
+  .bs-popover-bottom .arrow::after, .bs-popover-auto[x-placement^="bottom"] .arrow::after {
+  border-bottom-color: #D90000 !important; }
+/* End Popover Body */
+.noti-tudo {top: 35%; right: 20%;}
+.alert-diemdanh {position: absolute !important; left: 45%; top: 9%; width: 155px; font-size:12px}
 .text-blink {animation: blinker 1s linear infinite;}
+
+.session-chonroom {background-image: url(../images/bg-session-chonroom.png); background-repeat: no-repeat; background-position: top; background-size: 100% 100%; width: 100%; height: 160px; margin: 0 auto;}
+.session-chonroom .scr-c {display: inline-block; text-align: center; padding: 10px 0 0 10px; height: 50px;}
+.session-chonroom .scr-status-open  {display: inline-block; position: absolute; top: 18px; right: 0; width: 100px; height: 32px; background-image: url(../images/bg-chonroom-status-open.png); background-repeat: no-repeat; background-position: top; background-size: 100% 100%;}
+.session-chonroom .scr-status-pending  {display: inline-block; position: absolute; top: 18px; right: 0; width: 100px; height: 32px; background-image: url(../images/bg-chonroom-status-pending.png); background-repeat: no-repeat; background-position: top; background-size: 100% 100%;}
+.session-chonroom .scr-status-close  {display: inline-block; position: absolute; top: 18px; right: 0; width: 100px; height: 32px; background-image: url(../images/bg-chonroom-status-close.png); background-repeat: no-repeat; background-position: top; background-size: 100% 100%;}
+
+.session-chonroom .scr-info {position: absolute; top: 55px ; right: 0; width: 100%; height: 50px; text-align: right; padding: 0 10px}
+.session-chonroom .scr-playnow {position: absolute; bottom: 5px ; left: 0; width: 100%; height: 25px; text-align: center;}
 @keyframes blinker {
   40% {
     opacity: 0.2;

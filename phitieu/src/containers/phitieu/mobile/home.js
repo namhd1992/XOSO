@@ -1,31 +1,68 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import Pagination from "react-js-pagination";
+import Ultilities from '../../../Ultilities/global'
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import { connect } from 'react-redux'
 import './css/style.css';
 import {
-	getDetailData,
-	getRotationDetailData,
-	getRotationDetailDataUser,
 	pickCard,
-	buyTurn,
 	getTuDo,
 	getHistoryTuDo,
 	getMoreSessions,
-	getCodeBonus,
 	getVinhDanh,
 	getLuckyInfo,
 	getLuckyItems,
 	getInfoUser,
 	userLogout,
-	getDartScore,
-	getItemAward
+	gds,
+	getItemAward,
+	getRollup,
+	getDonate,
+	getInfoDonate,
+	checkRollup,
+	getListSanQua
 } from '../../../modules/lucky'
 import {
 	getData
-} from '../../../modules/profile'
+} from '../../../modules/profile';
+
+
+import banner_thongbao_off from './images/banner-thongbao-off.png';
+import icon_scoin from './images/icon-scoin.png';
+import btn_xac_nhan from './images/btn-xac-nhan.png';
+import icon_success from './images/icon-success.png';
+import fb_a1 from './images/fb-a1.jpg';
+import fb_a2 from './images/fb-a2.jpg';
+import fb_a3_a4 from './images/fb-a3-a4.jpg';
+import fb_a5 from './images/fb-a5.png';
+import fb_i1 from './images/fb-i1.jpg';
+import fb_i2 from './images/fb-i2.jpg';
+import fb_i3_i4 from './images/fb-i3-i4.jpg';
+import fb_i5 from './images/fb-i5.jpg';
+import tab_appfb from './images/tab-appfb.png';
+import tab_appfb_active from './images/tab-appfb-active.png';
+
+import btn_dongy from './images/btn-dongy.png';
+import banner_baotri from './images/banner-baotri.png';
+import tab_cachthucthamgia_active from './images/tab-cachthucthamgia-active.png';
+import tab_cachthucthamgia from './images/tab-cachthucthamgia.png';
+import tab_hdsanqua_active from './images/tab-hdsanqua-active.png';
+import tab_hdsanqua from './images/tab-hdsanqua.png';
+import tab_hdduatop_active from './images/tab-hdduatop-active.png';
+import tab_hdduatop from './images/tab-hdduatop.png';
+import tab_hdsdgiaithuong_active from './images/tab-hdsdgiaithuong-active.png';
+import tab_hdsdgiaithuong from './images/tab-hdsdgiaithuong.png';
+
+import scoin_10k from './images/scoin-10k.png';
+import btn_nap_scoin from './images/btn-nap-scoin.png';
+import voucher_scoin_banktranfer from './images/voucher-scoin-banktranfer.png';
+import scoin_voucher_10k from './images/scoin-voucher-10k.png';
+import che_do_duatop from './images/che-do-duatop.png';
+import che_do_sanqua from './images/che-do-sanqua.png';
+import tab_giaithuong from './images/tab-giaithuong.png';
+import btn_sanqua_duatop from './images/btn-sanqua-duatop.png';
 
 import btn_dangnhap from './images/btn-dangnhap.png';
 import btn_dangxuat from './images/btn-dangxuat.png';
@@ -143,21 +180,51 @@ class Lucky_Rotation extends React.Component {
 			innerWidth:0,
 			type:1, 
 			tab_tudo: true,
-			listSesstions:[]
+			listSesstions:[],
+			tab_1:true,
+			tab_2:false,
+			tab_3:false,
+			tab_4:false,
+			tab_5:false,
+			content:'',
+			rollup:true,
+			message_rollup:'',
+			dataInfoDonate:{},
+			type_action:'',
+			showRollup:false,
+			listSanqua:[],
+			message_sanqua_empty:''
 		};
 	}
 	componentWillMount(){
 		this.onResize();
+		var user = JSON.parse(localStorage.getItem("user"));
 		window.addEventListener("resize", this.setScreenOrientation);
 		window.removeEventListener('scroll', this.handleScroll);
 		this.setState({innerWidth:window.innerWidth})
+		if(user!==null){
+			if(user.Gifts>0){
+				this.setState({content:	`Có <b>${user.Gifts}</b> món quà chưa mở`})
+				setTimeout(()=>{
+					$('.popover-visible-trigger').popover('hide').off('click'); 
+				}, 10000);
+				
+			}
+		}
 	}
 
 
 
 	componentDidMount(){
 		var user = JSON.parse(localStorage.getItem("user"));
-
+		$('.popover-visible-trigger').popover('show').off('click'); 
+		// var update29=localStorage.getItem("update29");
+		// if(update29===null){
+		// 	$('#Modalbanner').modal('show');
+		// }
+		// localStorage.setItem("update29", true);
+		$('#Modalbanner').modal('show');
+		
 		this.getVinhDanh(1,1);
 
 
@@ -165,7 +232,28 @@ class Lucky_Rotation extends React.Component {
 			this.setState({isLogin:true, user:user})
 		} 
 
-		this.getMoreSessions();
+		if (user !== null) {
+			this.props.checkRollup(user.Token).then(()=>{
+				var data=this.props.dataCheckRollup;
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({showRollup: true})
+					}else{
+						this.setState({showRollup: false})
+					}
+				}
+			})
+		}else {
+			this.setState({showRollup: true})
+		}
+
+		// var isfb=this.isFacebookApp();
+		// if (isfb) {
+		// 	$('#Modalfbview').modal('show');
+		// }else{
+		// 	$('#Modalbanner').modal('show');
+		// }
+
 		
 		window.addEventListener('scroll', this.handleScroll);
 	}
@@ -181,6 +269,13 @@ class Lucky_Rotation extends React.Component {
 	componentWillUnmount() {
 		clearInterval(this.state.intervalId);
 	}
+
+
+	isFacebookApp=()=> {
+		var ua = navigator.userAgent || navigator.vendor || window.opera;
+		return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1);
+	}
+
 	setScreenOrientation=()=>{
 		const {innerWidth}=this.state;
 		if(Math.abs(innerWidth - window.innerWidth) >100){
@@ -189,15 +284,18 @@ class Lucky_Rotation extends React.Component {
 		}
 	}
 
-	getMoreSessions=()=>{
+	showModalGiaiThuong=()=>{
 		this.props.getMoreSessions().then(()=>{
 			var data=this.props.dataSesions;
 			if(data!==undefined){
 				if(data.Status===0){
-					this.setState({listSesstions:data.Data})
+					this.setState({listSesstions:data.Data}, ()=>{
+						$('#Modalgiaithuong').modal('show');
+					})
 				}else if(data.Status===2){
-					this.setState({msg:'Chưa load được dữ liệu'})
-					$('#myModal11').modal('show');
+					this.setState({message_error:data.Message}, ()=>{
+						$('#myModal11').modal('show');
+					})
 				}else if(data.Status===3){
 					this.logoutAction();
 				}else{
@@ -205,6 +303,27 @@ class Lucky_Rotation extends React.Component {
 				}
 			}
 		})
+	}
+
+	showModalChuyenTieu=()=>{
+		var user = JSON.parse(localStorage.getItem("user"));
+		document.getElementById("code").value="";
+		document.getElementById("username").value="";
+		document.getElementById("numberDart").value="";
+		if (user !== null) {
+			this.props.getInfoDonate(user.Token).then(()=>{
+				var data=this.props.dataInfoDonate;
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({dataInfoDonate:data.Data}, ()=>{
+							$('#Modalchuyenphitieu').modal('show');
+						})
+					}
+				}
+			})
+		}else {
+			$('#Modaldangnhap').modal('show');
+		}
 	}
 
 	onResize=()=>{
@@ -263,7 +382,6 @@ class Lucky_Rotation extends React.Component {
 				if(data!==undefined){
 					if(data.Status===0){
 						var listVinhDanh=data.Data;
-						console.log(listVinhDanh)
 						this.setState({listVinhDanh:data.Data, countVinhDanh:data.Totals})
 					}else{
 						$('#myModal11').modal('show');
@@ -323,7 +441,7 @@ class Lucky_Rotation extends React.Component {
 				"token": user.Token,
 			}
 		}
-		axios.get('https://api.splay.vn/luckywheel/luckywheel/user-signout/', header).then(function (response) {
+		axios.get(Ultilities.base_url() +'darts/user-signout/', header).then(function (response) {
 			console.log(response)
 		})
 	}
@@ -354,9 +472,9 @@ class Lucky_Rotation extends React.Component {
 		var m=a.getMonth()+1
 		var month =m > 9 ? m : `0${m}`;
 		var date = a.getDate();
-		var hour = a.getHours();
-		var min = a.getMinutes();
-		var sec = a.getSeconds();
+		var hour = a.getHours() > 9 ? a.getHours() : `0${a.getHours()}`;
+		var min = a.getMinutes() > 9 ? a.getMinutes() : `0${a.getMinutes()}`;
+		var sec = a.getSeconds() > 9 ? a.getSeconds() : `0${a.getSeconds()}`;
 		var time = date + '/' + month + '/' + year + ' ' + hour + ':' + min + ':' + sec ;
 		return time;
 	  }
@@ -384,10 +502,10 @@ class Lucky_Rotation extends React.Component {
 		}
 	}
 
-	showModalGiaiThuong=()=>{
-		this.getMoreSessions();
-		$('#Modalgiaithuong').modal('show');
-	}
+	// showModalGiaiThuong=()=>{
+	// 	this.getMoreSessions();
+	// 	$('#Modalgiaithuong').modal('show');
+	// }
 
 	showModalHuongDan=()=>{
 		$('#Modalhuongdan').modal('show');
@@ -403,11 +521,13 @@ class Lucky_Rotation extends React.Component {
 			var data=this.props.dataTuDo;
 			if(data!==undefined){
 				if(data.Status===0){
-					$('#myModal2').modal('show');
 					this.setState({listTuDo:data.Data, countTuDo:data.Totals, noti_tudo:false})
+				}else if(data.Status===3){
+					this.logoutAction();
 				}else{
-					$('#myModal11').modal('show');
-					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
+					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'}, ()=>{
+						$('#myModal11').modal('show');
+					})
 				}
 			}else{
 				$('#myModal12').modal('show');
@@ -428,6 +548,8 @@ class Lucky_Rotation extends React.Component {
 			if(data!==undefined){
 				if(data.Status===0){
 					this.setState({listHistory:data.Data, countHistory:data.Totals})
+				}else if(data.Status===3){
+					this.logoutAction();
 				}else{
 					$('#myModal11').modal('show');
 					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
@@ -445,25 +567,32 @@ class Lucky_Rotation extends React.Component {
 			var data=this.props.dataItemAward;
 			if(data!==undefined){
 				if(data.Status===0){
-					// this.setState({listHistory:data.Data, countHistory:data.Totals})
-					this.setState({dataItem:data.Data})
-					$("#MoQua").modal('show');
+					this.getDataTuDo(user)
+					if(data.Data.Type ==='BankTransferVoucher'){
+						this.setState({dataItem:data.Data},()=>{
+							$("#Modalmoquavoucher").modal('show');
+						})
+					}else{
+						this.setState({dataItem:data.Data},()=>{
+							$("#Modalmoqua").modal('show');
+						})
+					}
 				}else if(data.Status===1){
-					$('#myModal11').modal('show');
-					this.setState({message_error:data.Message})
+					this.setState({message_error:data.Message}, ()=>{
+						$('#myModal11').modal('show');
+					})
+				}else if(data.Status===3){
+					this.logoutAction();
 				}else{
-					$('#myModal11').modal('show');
-					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
+					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'}, ()=>{
+						$('#myModal11').modal('show');
+					})
 				}
 			}else{
 				$('#myModal12').modal('show');
 				this.setState({server_err:true})
 			}
 		});
-	}
-
-	hideModalTuDo=()=>{
-		$('#myModal2').modal('hide');
 	}
 
 	closePopupAuto=()=>{
@@ -529,7 +658,7 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	sanqua=()=>{
-
+		$('#Modalthele').modal('show');
 	}
 
 	dangNhap=()=>{
@@ -616,10 +745,138 @@ class Lucky_Rotation extends React.Component {
 		return s;
 	}
 
+	timeEnd=(time)=>{
+		var start=time.substring(time.indexOf("(") +1,time.indexOf(")"));
+		var a = new Date(+start);
+		// var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		var year = a.getFullYear();
+		var m=a.getMonth()+1
+		var month =m > 9 ? m : `0${m}`;
+		var date = a.getDate();
+		var hour = a.getHours() > 9 ? a.getHours() : `0${a.getHours()}`;
+		var min = a.getMinutes() > 9 ? a.getMinutes() : `0${a.getMinutes()}`;
+		var sec = a.getSeconds() > 9 ? a.getSeconds() : `0${a.getSeconds()}`;
+		var s = hour + ':' + min + ':' + sec + " ngày " + date + '/' + month + '/' + year ;
+		return s;
+	}
+
+	tab1=()=>{
+		this.setState({tab_1:true, tab_2:false, tab_3:false, tab_4:false, tab_5:false})
+	}
+
+	tab2=()=>{
+		this.setState({tab_1:false, tab_2:true, tab_3:false, tab_4:false, tab_5:false})
+	}
+
+	tab3=()=>{
+		this.setState({tab_1:false, tab_2:false, tab_3:true, tab_4:false, tab_5:false})
+	}
+
+	tab4=()=>{
+		this.setState({tab_1:false, tab_2:false, tab_3:false, tab_4:true, tab_5:false})
+	}
+
+	tab5=()=>{
+		this.setState({tab_1:false, tab_2:false, tab_3:false, tab_4:false, tab_5:true})
+	}
+
+	rollup=()=>{
+		var user = JSON.parse(localStorage.getItem("user"));
+		if (user !== null) {
+			this.props.getRollup(user.Token).then(()=>{
+				var data=this.props.dataRollup;
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({rollup:true, message_rollup: data.Message, type_action:'Điểm danh', showRollup:false}, ()=>{
+							$('#Modalddthanhcong').modal('show');
+						})
+					}else if(data.Status===1){
+						this.setState({rollup:false, message_rollup: data.Message}, ()=>{
+							$('#Modalddthanhcong').modal('show');
+						})
+					}
+				}
+			})
+		}else {
+			$('#Modaldangnhap').modal('show');
+		}
+		
+
+	}
+
+	comfirmDonate=()=>{
+		var code=document.getElementById('code').value;
+		var username=document.getElementById('username').value;
+		var numberDart=document.getElementById('numberDart').value;
+
+		var user = JSON.parse(localStorage.getItem("user"));
+		if (user !== null) {
+			this.props.getDonate(user.Token, username, numberDart, code).then(()=>{
+				var data=this.props.dataDonate;
+				console.log(data)
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({rollup:true, message_rollup: data.Message, type_action:'Chuyển tiêu'}, ()=>{
+							$('#Modalchuyenphitieu').modal('hide');
+							$('#Modalddthanhcong').modal('show');
+						})
+					}else{
+						this.setState({rollup:false, message_rollup: data.Message}, ()=>{
+							$('#Modalchuyenphitieu').modal('hide');
+							$('#Modalddthanhcong').modal('show');
+						})
+					}
+				}
+			})
+		}else {
+			$('#Modaldangnhap').modal('show');
+		}
+	}
+
+	getListSanQua=()=>{
+		var user = JSON.parse(localStorage.getItem("user"));
+		if (user !== null) {
+			this.props.getListSanQua(user.Token).then(()=>{
+				var data=this.props.dataSanqua;
+				if(data!==undefined){
+					if(data.Status===0){
+						this.setState({listSanqua:data.Data}, ()=>{
+							$('#Modalchonroom').modal('show');
+						})
+					}else{
+						this.setState({message_sanqua_empty:data.Message}, ()=>{
+							$('#ModalListEmpty').modal('show');
+						})
+					}
+				}
+			})
+		}else {
+			$('#Modaldangnhap').modal('show');
+		}
+	}
+
+	showGiaithuong=(data)=>{
+		var n=data.length;
+		var items=''
+		for (let i = 0; i < n; i++) {
+			if(i < n-1){
+				items=data[i].Description + ' + ' +items
+			}else{
+				items=items + ' ' + data[i].Description
+			}
+			
+		}
+		return items;
+	}
+
+	playSanqua=(obj)=>{
+		localStorage.setItem("obj", JSON.stringify(obj));
+		window.location.replace('/sanqua')
+	}
 
 
 	render() {
-		const {tab_tudo ,type,numberPage, isLogin,message_error,dataItem,listSesstions,
+		const {message_sanqua_empty, listSanqua,showRollup, type_action, dataInfoDonate, rollup, message_rollup, content,tab_1, tab_2, tab_3, tab_4,tab_5,tab_tudo ,type,numberPage, isLogin,message_error,dataItem,listSesstions,
 			waiting, activeTuDo, activeHistory, activeVinhDanh, limit, countTuDo, countHistory, countVinhDanh, listHistory, listTuDo, listVinhDanh, user}=this.state;
 		const { classes } = this.props;
 		return (<div>
@@ -647,12 +904,11 @@ class Lucky_Rotation extends React.Component {
 							<div class="bg-bottom_m">
 
 								{(isLogin)?(<div class="btn-s_m position-relative">
-									{(user.VipLevel>0)?(<div><Link to="/sanqua">
-										<a style={{cursor:'pointer'}}><img src={btn_sanqua} width="30%" hspace="10" /></a>
-									</Link>
-									<Link to="/duatop">
-										<a style={{cursor:'pointer'}}><img src={btn_duatop} width="30%" hspace="10" /></a>
-									</Link></div>):(<div><a title="Săn quà" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_sanqua} width="30%" hspace="10" /></a>
+									{(user.VipLevel>0)?(<div>
+										<a style={{cursor:'pointer'}} onClick={this.getListSanQua}><img src={btn_sanqua} width="30%" hspace="10" /></a>
+
+										<a href="/duatop" style={{cursor:'pointer'}}><img src={btn_duatop} width="30%" hspace="10" /></a>
+									</div>):(<div><a title="Săn quà" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_sanqua} width="30%" hspace="10" /></a>
                							<a title="Đua TOP" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_duatop} width="30%" hspace="10" /></a></div>)}
 									
 								</div>):(
@@ -732,17 +988,22 @@ class Lucky_Rotation extends React.Component {
 										Công ty Cổ Phần VTC Dịch Vụ Di Động <br></br>
 										Tầng 11, Tòa nhà VTC Online, số 18 Tam Trinh, Hai Bà Trưng, Hà Nội <br></br>
 										SĐT : (84-4).39877470 | Email : vtcmobile@vtc.vn <br></br>
-										Người chịu trách nhiệm quản lý nội dung: Ông Nguyễn Ngọc Bảo <br></br>
+										Người chịu trách nhiệm quản lý nội dung: Ông Nguyễn Viết Quang Minh <br></br>
 										Tổng đài hỗ trợ 1900 1104
 									</p>
 								</div>
+								{(showRollup) ? (<div class="alert alert-info alert-diemdanh_m p-1 m-0">
+									<span class="text-blink"><a title="Điểm danh" data-toggle="modal" onClick={this.rollup}>Điểm danh <strong>+ 5 phi tiêu</strong>.</a></span>
+								</div>):(<div></div>)}
+								
 								<div class="menu-left_m">
 									<a href="https://vip.scoin.vn" title="Active VIP" target="_blank"><p class="mb-0 menu-link_m link-first_m"></p></a>
-									<a title="Hướng dẫn chơi" onClick={this.showModalHuongDan}><p class="mb-0 menu-link_m"></p></a>
-									<a title="Giải thưởng" onClick={this.showModalGiaiThuong}><p class="mb-0 menu-link_m"></p></a>
-									<a href="#" title="Lịch sử giao dịch"><p class="mb-0 menu-link_m"></p></a>
+									<a title="Hướng dẫn chơi" onClick={this.showModalHuongDan} style={{cursor:'pointer'}}><p class="mb-0 menu-link_m"></p></a>
+									<a title="Giải thưởng" onClick={this.showModalGiaiThuong} style={{cursor:'pointer'}}><p class="mb-0 menu-link_m"></p></a>
+									<a title="Chuyển phi tiêu" onClick={this.showModalChuyenTieu}><p class="mb-0 menu-link_m"></p></a>
 								</div>
-								<div class="menu-right_m"><a title="Tủ đồ" data-toggle="modal" onClick={this.showModalTuDo}><img src={btn_tudo} width="100%" alt="" /></a></div>
+								<div class="menu-right_m popover-visible-trigger" data-toggle="popover" data-placement="top" data-content={content} data-html="true"><a title="Tủ đồ" data-toggle="modal" onClick={this.showModalTuDo}><img src={btn_tudo} width="100%" alt="" /></a></div>
+								
 							</div>
 						</div>
 					
@@ -781,6 +1042,21 @@ class Lucky_Rotation extends React.Component {
 				</div>
 			</div>
 
+						{/* <!-- The Modal Thông báo lỗi--> */}
+			<div className="modal fade" id="myModal11" style={{zIndex:99999}}>
+				<div class="modal-dialog modal-dangnhap">
+					<div class="modal-content bg-transparent border-0">
+					<div class="modal-header border-0 p-0 text-dark">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body border-0">
+						<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">{message_error}</h2>
+					</div>
+
+					</div>
+				</div>
+			</div>
+
 
 			{/* <!-- The Modal Giai thuong--> */}
 			<div class="modal fade" id="Modalgiaithuong">
@@ -792,12 +1068,12 @@ class Lucky_Rotation extends React.Component {
 						</div>
 						<div class="modal-body border-0 py-0 my-2 px-3 scroll-modal-body_m">
 							{listSesstions.map((obj, key) => (      	
-								<div class="row mx-0 mb-1 border-giaithuong-e_m position-relative" key={key}>
+								<div class="row mx-0 mb-1 border-giaithuong-e_m position-relative d-flex justify-content-center " key={key}>
 									<div class="col-12 text-center text-brown pt-1">
 										<h2 class="font-size-3vw_m font-weight-bold text-uppercase mb-0">{this.getTypeGiaiThuong(obj.SessionType)}</h2>
 										{(obj.Status===0)?(<p class="font-size-3vw_m">Còn: {this.timeModalGiaiThuowng(obj.StartTime)}</p>):(<div></div>)}
 										{(obj.Status===1)?(<p class="font-size-3vw_m mb-0 text-yellow text-blink"><span class="spinner-grow text-yellow" style={{width: ".8rem", height: ".8rem"}}></span> Đang diễn ra ... </p>):(<div></div>)}
-										{(obj.Status===2)?( <p class="font-size-3vw_m text-danger">Đã kết thúc</p>):(<div></div>)}
+										{(obj.Status===2)?( <p class="font-size-3vw_m text-danger">Đã kết thúc {this.timeEnd(obj.EndTime)}</p>):(<div></div>)}
 									</div>
 
 									{obj.Awards.map((v, j) => (
@@ -818,19 +1094,19 @@ class Lucky_Rotation extends React.Component {
 
 			{/* <!-- The Modal Tu do--> */}
 			<div class="modal fade" id="Modaltudo">
-				<div class="modal-dialog modal-tudo_m">
+				<div class="modal-dialog modal-tudo_m  modal-dialog-scrollable">
 					<div class="modal-content bg-transparent border-0">
 						<div class="modal-header border-0 p-0 text-dark">
 							<button type="button" class="close" data-dismiss="modal">&times;</button>
 						</div>
 
-						<div class="modal-body border-0 py-0 my-0 px-3 scroll-modal-body_m">
+						<div class="modal-body border-0 py-0 mb-0 mt-2 px-3 scroll-modal-body_m">
 							<ul class="nav nav-pills_m nav-justified mx-auto">
 								<li class="nav-item">
-									<a class="nav-link_m py-0" onClick={()=>this.getDataTuDo(user)}><img src={tab_tudo ? btn_phanthuong_active: btn_phanthuong} width="100%" hspace="5" id="image-3" /></a>
+									<a class="nav-link_m py-0" onClick={()=>this.getDataTuDo(user)}><img src={tab_tudo ? btn_phanthuong_active: btn_phanthuong} width="60%" hspace="5" id="image-3" /></a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link_m py-0" onClick={()=>this.getHistory(user)}><img src={tab_tudo ? btn_lichsu : btn_lichsu_active} width="100%" hspace="5" id="image-4" /></a>
+									<a class="nav-link_m py-0" onClick={()=>this.getHistory(user)}><img src={tab_tudo ? btn_lichsu : btn_lichsu_active} width="60%" hspace="5" id="image-4" /></a>
 								</li>
 							</ul>   
 							<div class="tab-content">
@@ -848,16 +1124,16 @@ class Lucky_Rotation extends React.Component {
 											{listTuDo.map((obj, key) => (
 												
 													<tr key={key} class="bg-border-bottom_m">
-														<td className="p-1 bg-border-right w-33 valign-middle" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardName}></span>{obj.AwardName}</td>
-														<td className="p-1 bg-border-right w-33 valign-middle" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardName}></span>{obj.AwardName}</td>
-														<td className="p-0 bg-border-right w-25 valign-middle">{this.timeConverter(obj.RewardTime)}</td>
-														{(obj.AwardName.indexOf("Thêm")===0)?(<td class="p-1 w-auto valign-middle">Mở</td>):(<td class="p-1 w-auto valign-middle"><a class="text-primary"  style={{cursor:'pointer'}} onClick={()=>this.getItem(user, obj)}>Mở</a></td>)}
+														<td class="p-0 bg-border-right w-25 valign-middle text-tudo_m">{obj.AwardName}</td>
+                    									<td class="p-0 bg-border-right w-25 valign-middle text-tudo_m">{obj.AwardDisplay}</td>
+														<td className="p-0 bg-border-right w-25 valign-middle text-tudo_m">{this.timeConverter(obj.RewardTime)}</td>
+														{(obj.Status===1)?(<td class="p-1 w-auto valign-middle"><a class="text-primary"  style={{cursor:'pointer'}} onClick={()=>this.getItem(user, obj)}>Mở quà</a></td>):(<td class="p-1 w-auto valign-middle position-relative"><a class="text-primary"  style={{cursor:'pointer'}} onClick={()=>this.getItem(user, obj)}>Mở quà</a><span class="badge badge-pill badge-danger position-absolute noti-tudo_m">!</span></td>)}
 														
 													</tr>
 												))}				
 										</tbody>
 									</table>
-									<div className="pagination justify-content-center pag-custom_m font-size-3vw_m">
+									<div className="pagination justify-content-center mt-1 pag-custom_m font-size-3vw_m">
 									<Pagination
 										activePage={activeTuDo}
 										itemsCountPerPage={limit}
@@ -882,9 +1158,9 @@ class Lucky_Rotation extends React.Component {
 											{listHistory.map((obj, key) => (
 												
 													<tr key={key} class="bg-border-bottom_m">
-														<td className="p-1 bg-border-right w-33 valign-middle" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardName}></span>{obj.AwardName}</td>
-														<td className="p-1 bg-border-right w-33 valign-middle" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardDisplay}></span>{obj.AwardDisplay}</td>
-														<td className="p-1 bg-border-right w-33 valign-middle">{this.timeConverter(obj.RewardTime)}</td>
+														<td class="p-0 bg-border-right valign-middle text-tudo_m">{obj.AwardName}</td>
+                    									<td class="p-0 bg-border-right valign-middle text-tudo_m">{obj.AwardDisplay}</td>
+														<td className="p-0 valign-middle text-tudo_m">{this.timeConverter(obj.RewardTime)}</td>
 													</tr>
 												))}				
 										</tbody>
@@ -916,7 +1192,7 @@ class Lucky_Rotation extends React.Component {
 
 			{/* <!-- The Modal Huong Dan--> */}
 			<div class="modal fade" id="Modalhuongdan">
-				<div class="modal-dialog modal-giaithuong modal-dialog-scrollable">
+				<div class="modal-dialog modal-huongdan_m modal-dialog-scrollable">
 					<div class="modal-content bg-transparent border-0">
 
 					{/* <!-- Modal Header --> */}
@@ -925,166 +1201,239 @@ class Lucky_Rotation extends React.Component {
 					</div>
 
 					{/* <!-- Modal body --> */}
-					<div class="modal-body border-0 py-0 mb-2 mt-3 px-3 scroll-modal-body">
-						<h4 class="font-size-3vw font-weight-bold">1. Cách thức tham gia</h4>
-						<dl class="font-size-3vw">
-							<dt>- Đối tượng tham gia:</dt>
-							<dd> &bull; Toàn bộ khách hàng đã active tài khoản khách hàng VIP.</dd>
-							<dd> &bull; Nếu chưa là khách hàng VIP, bạn vui lòng thực hiện active và trở thành VIP <a class="text-primary" href="https://vip.scoin.vn/" title="Active VIP" target="_blank">tại đây</a></dd>
-							<dt>- Cách thức tham gia:</dt>
-							<dd> &bull; Trong thời gian diễn ra sự kiện, với mỗi lần nạp ingame/nạp ví scoin bằng thẻ scoin và chuyển khoản ngân hàng thành công, tài khoản sẽ nhận được phi tiêu để tham gia game, số phi tiêu được quy định như sau: </dd>
-							<dd> 
-								<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
-									<thead>
-									<tr>
-										<th class="p-1">Số tiền nạp thẻ Scoin</th>
-										<th class="p-1">Số phi tiêu nhận</th>
-
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td class="p-1">10k</td>
-										<td class="p-1">1</td>
-									</tr>
-									<tr>
-										<td class="p-1">20k</td>
-										<td class="p-1">2</td>
-									</tr>
-									<tr>
-										<td class="p-1">50k</td>
-										<td class="p-1">5</td>
-									</tr>
-									<tr>
-										<td class="p-1">100k</td>
-										<td class="p-1">10</td>
-									</tr>
-									<tr>
-										<td class="p-1">200k</td>
-										<td class="p-1">20</td>
-									</tr>
-									<tr>
-										<td class="p-1">300k</td>
-										<td class="p-1">30</td>
-									</tr>
-									<tr>
-										<td class="p-1">500k</td>
-										<td class="p-1">50</td>
-									</tr>
-									<tr>
-										<td class="p-1">1000k</td>
-										<td class="p-1">100</td>
-									</tr>
-									<tr>
-										<td class="p-1">2000k</td>
-										<td class="p-1">200</td>
-									</tr>
-									<tr>
-										<td class="p-1">5000k</td>
-										<td class="p-1">500</td>
-									</tr>
-									</tbody>
-								</table>
-								<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
-									<thead>
-									<tr>
-										<th class="p-1">Số tiền nạp chuyển khoản ngân hàng </th>
-										<th class="p-1">Số phi tiêu nhận</th>
-
-									</tr>
-									</thead>
-									<tbody>
-									<tr>
-										<td class="p-1">&lt; 10k</td>
-										<td class="p-1">0</td>
-									</tr>
-									<tr>
-										<td class="p-1">10k &lt; nạp &lt; 50k</td>
-										<td class="p-1">3</td>
-									</tr>
-									<tr>
-										<td class="p-1">50k &lt; nạp &lt; 100k</td>
-										<td class="p-1">8</td>
-									</tr>
-									<tr>
-										<td class="p-1">100k &lt; nạp &lt; 500k</td>
-										<td class="p-1">35</td>
-									</tr>
-									<tr>
-										<td class="p-1">500k &lt; nạp &lt; 1000k</td>
-										<td class="p-1">60</td>
-									</tr>
-									<tr>
-										<td class="p-1">1000k &lt; nạp &lt; 2000k</td>
-										<td class="p-1">120</td>
-									</tr>
-									<tr>
-										<td class="p-1">2000k &lt; nạp &lt; 5000k</td>
-										<td class="p-1">250</td>
-									</tr>                      
-									</tbody>
-								</table>
-							</dd>            
-							<dd> - Sau khi nhận được Phi tiêu, khách hàng truy cập trang sự kiện, chọn chế độ chơi Săn quà hoặc Đua top để chơi.</dd>
-							<dd> - Khách hàng sử dụng chuột (chơi trên PC) hoặc vuốt màn hình (chơi trên điện thoại) để ném phi tiêu vào bảng</dd>
-							<dd> <img src={nem_phi_tieu} class="img-fluid" alt="" /></dd>
-							<dd> <img src={huy_nem_tieu} class="img-fluid" alt="" /></dd>
-							<dd> - Vị trí phi tiêu tương ứng với số điểm người chơi nhận được như sau:</dd>
-							<dd> <img src={khu_vuc_1} class="img-fluid" alt="" /></dd>
-							<dd> <img src={khu_vuc_2} class="img-fluid" alt="" /></dd>
-							<dd> <img src={khu_vuc_3} class="img-fluid" alt="" /></dd>
-							<dd> <img src={vong_tron_ngoai} class="img-fluid" alt="" /></dd>
-							<dd> <img src={vong_tron_trong} class="img-fluid" alt="" /></dd>
-						</dl> 
-						<h4 class="font-size-3vw font-weight-bold">2. Săn quà</h4>
-						<dl class="font-size-3vw">
-							<dd>- Thời gian của phiên <strong>Săn quà</strong> diễn ra trong 1 ngày và giải thưởng của phiên đó được cập nhật liên tục tại <a href="#Modalgiaithuong" title="Giải thưởng" data-toggle="modal" data-dismiss="modal">Giải thưởng</a></dd>
-							<dd>- Trong thời gian diễn ra Phiên săn quà, người chơi chọn Chế độ <strong>Săn quà</strong> tại Trang chủ để tham gia.</dd>
-							<dd>- Mỗi tài khoản có số điểm mặc định ban đầu là <strong>501 điểm</strong>.</dd>
-							<dd>- Người chơi sử dụng số Phi tiêu mình có để ném vào bảng, số điểm nhận được sau mỗi lần ném sẽ được trừ dần vào số điểm 501 ban đầu.</dd>
-							<dd>- Trong thời gian quy định, tài khoản nào đưa được tổng điểm về 0 sớm nhất sẽ là người thắng cuộc và nhận được giải thưởng của phiên chơi đó, đồng thời phiên chơi sẽ kết thúc, tất cả các tài khoản còn lại sẽ được tiếp tục tham gia ở Phiên săn quà tiếp theo.</dd>
-							<dd>- Trường hợp có nhiều tài khoản cùng đưa được điểm về 0 tại cùng thời điểm, giải thưởng sẽ được chia đều cho các tài khoản.</dd>
-							<dd>- Trường hợp trong thời gian quy định, không có người chơi nào đưa được điểm về 0, người thắng cuộc là người có số điểm còn lại ít nhất.</dd>           
-						</dl>
-						<h4 class="font-size-3vw font-weight-bold">3. Đua TOP</h4>
-						<dl class="font-size-3vw">
-							<dd>- Trong thời gian diễn ra Phiên Đua top, người chơi chọn Chế độ <strong>Đua top</strong> tại Trang chủ để tham gia.</dd>
-							<dd>- Mỗi tài khoản có số điểm mặc định ban đầu là <strong>0 điểm</strong>.</dd>
-							<dd>- Người chơi sử dụng số Phi tiêu mình có để ném vào bảng, số điểm nhận được sau mỗi lần ném sẽ được cộng dồn vào tổng điểm đang có.</dd>
-							<dd>- Kết thúc Phiên Đua top, tài khoản có tổng điểm cao nhất sẽ là người thắng cuộc và nhận được giải thưởng.</dd>
-							<dd>- Trường hợp nhiều người chơi có tổng điểm cao nhất bằng nhau, người thắng cuộc là người có số lượt ném Phi tiêu nhiều nhất.</dd>
-							<dd>- Trường hợp nhiều người chơi có tổng điểm cao nhất bằng nhau và số lượt ném phi tiêu bằng nhau, giải thưởng được chia đều cho các tài khoản.</dd>         
-						</dl>
-						<h4 class="font-size-3vw font-weight-bold">4. Hướng dẫn sử dụng giải thưởng</h4>
-						<dl class="font-size-3vw">
-							<dt>- Voucher Scoin:</dt>
-							<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ voucher Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
-							<dd> <img src={voucher_scoin} class="img-fluid" alt="" /></dd>
-							<dd> &bull; Copy mã Thẻ và số serial của thẻ:</dd>
-							<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Nạp game/Điền Tên tài khoản và server/ Chọn phương thức nạp Thẻ cào/ Chọn loại thẻ Scoin và điền mã Thẻ và số serial đã copy ở trên.</dd>
-							<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
-							<dd class="font-italic">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
-							<dt>- Voucher chuyển khoản ngân hàng:</dt>
-							<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ voucher chuyển khoản ngân hàng</strong> và click <span class="text-primary">Mở</span>.</dd>
-							<dd> <img src={voucher_scoin} class="img-fluid" alt="" /></dd>
-							<dd> &bull; Ấn <strong>“Nạp ngay”</strong></dd>
-							<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Phương thức nạp Ngân hàng</dd>
-							<dd> <img src={nap_ngan_hang} class="img-fluid" alt="" /></dd>
-							<dd> &bull; Copy <strong>Nội dung chuyển khoản</strong> và paste vào mục <strong>Nội dung</strong> khi bạn thực hiện chuyển khoản vào tài khoản VTC Mobile, số tiền trong voucher sẽ được cộng trực tiếp vào ví sau khi bạn chuyển khoản thành công.</dd>
-							<dd> <img src={ck_ngan_hang} class="img-fluid" alt="" /></dd>
-							<dd class="font-italic">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
-							<dt>- Topup 50k:</dt>
-							<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Topup Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
-							<dd> <img src={topup_scoin} class="img-fluid" alt="" /></dd>
-							<dd> &bull; Scoin được tự động cộng vào Ví Scoin của tài khoản </dd>
-							<dt>- Thẻ Scoin:</dt>
-							<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn <strong>giải thưởng Thẻ Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
-							<dd> <img src={the_scoin} class="img-fluid" alt="" /></dd>
-							<dd> &bull; Copy mã Thẻ và số serial của thẻ:</dd>
-							<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Nạp game/Điền Tên tài khoản và server/ Chọn phương thức nạp Thẻ cào/ Chọn loại thẻ Scoin và điền mã Thẻ và số serial đã copy ở trên.</dd>
-							<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
-
-						</dl> 
+					<div class="modal-body border-0 py-0 mb-2 mt-3 px-3 scroll-modal-body_m">
+						<ul class="nav nav-pills justify-content-around">
+							<li class="nav-item">
+								<a class="nav-link p-1" onClick={this.tab1}><img id="image-5" src={tab_1 ? tab_cachthucthamgia_active : tab_cachthucthamgia} width="130"  alt="" /></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link p-1" onClick={this.tab2}><img id="image-6" src={tab_2 ? tab_hdsanqua_active : tab_hdsanqua} width="130" alt="" /></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link p-1" onClick={this.tab3}><img id="image-7" src={tab_3 ? tab_hdduatop_active : tab_hdduatop} width="130" alt="" /></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link p-1" onClick={this.tab4}><img id="image-8" src={tab_4 ? tab_hdsdgiaithuong_active : tab_hdsdgiaithuong} width="130" alt="" /></a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link p-1" onClick={this.tab5}><img id="image-8" src={tab_5 ? tab_appfb_active : tab_appfb} width="130" alt="" /></a>
+							</li>
+						</ul>
+							
+							{/* <!-- Tab panes --> */}
+							<div class="tab-content">
+								{/* <!-- Tab hd1 --> */}
+							<div class={tab_1 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd1">
+								<h4 class="font-size-3vw_m font-weight-bold">1. Cách thức tham gia</h4>
+								<dl class="font-size-3vw_m">
+									<dt>- Đối tượng tham gia:</dt>
+									<dd> &bull; Toàn bộ khách hàng đã active tài khoản khách hàng VIP.</dd>
+									<dd> &bull; Nếu chưa là khách hàng VIP, bạn vui lòng thực hiện active và trở thành VIP <a class="text-primary" href="https://vip.scoin.vn/" title="Active VIP" target="_blank">tại đây</a></dd>
+									<dt>- Cách thức tham gia:</dt>
+									<dd> &bull; Trong thời gian diễn ra sự kiện, với mỗi lần nạp ingame/nạp ví scoin bằng thẻ scoin và chuyển khoản ngân hàng thành công, tài khoản sẽ nhận được phi tiêu để tham gia game, số phi tiêu được quy định như sau: </dd>
+									<dd> 
+										<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
+											<thead>
+											<tr>
+												<th class="p-1">Số tiền nạp thẻ Scoin</th>
+												<th class="p-1">Số phi tiêu nhận</th>
+						
+											</tr>
+											</thead>
+											<tbody>
+											<tr>
+												<td class="p-1">10k</td>
+												<td class="p-1">1</td>
+											</tr>
+											<tr>
+												<td class="p-1">20k</td>
+												<td class="p-1">2</td>
+											</tr>
+											<tr>
+												<td class="p-1">50k</td>
+												<td class="p-1">5</td>
+											</tr>
+											<tr>
+												<td class="p-1">100k</td>
+												<td class="p-1">10</td>
+											</tr>
+											<tr>
+												<td class="p-1">200k</td>
+												<td class="p-1">20</td>
+											</tr>
+											<tr>
+												<td class="p-1">300k</td>
+												<td class="p-1">30</td>
+											</tr>
+											<tr>
+												<td class="p-1">500k</td>
+												<td class="p-1">50</td>
+											</tr>
+											<tr>
+												<td class="p-1">1000k</td>
+												<td class="p-1">100</td>
+											</tr>
+											<tr>
+												<td class="p-1">2000k</td>
+												<td class="p-1">200</td>
+											</tr>
+											<tr>
+												<td class="p-1">5000k</td>
+												<td class="p-1">500</td>
+											</tr>
+											</tbody>
+										</table>
+										<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
+											<thead>
+											<tr>
+												<th class="p-1">Số tiền nạp chuyển khoản ngân hàng </th>
+												<th class="p-1">Số phi tiêu nhận</th>
+						
+											</tr>
+											</thead>
+											<tbody>
+											<tr>
+												<td class="p-1">&lt; 10k</td>
+												<td class="p-1">0</td>
+											</tr>
+											<tr>
+												<td class="p-1">10k &lt; nạp &lt; 50k</td>
+												<td class="p-1">3</td>
+											</tr>
+											<tr>
+												<td class="p-1">50k &lt; nạp &lt; 100k</td>
+												<td class="p-1">8</td>
+											</tr>
+											<tr>
+												<td class="p-1">100k &lt; nạp &lt; 500k</td>
+												<td class="p-1">35</td>
+											</tr>
+											<tr>
+												<td class="p-1">500k &lt; nạp &lt; 1000k</td>
+												<td class="p-1">60</td>
+											</tr>
+											<tr>
+												<td class="p-1">1000k &lt; nạp &lt; 2000k</td>
+												<td class="p-1">120</td>
+											</tr>
+											<tr>
+												<td class="p-1">2000k &lt; nạp &lt; 5000k</td>
+												<td class="p-1">250</td>
+											</tr>                      
+											</tbody>
+										</table>
+									</dd>            
+									<dd> - Sau khi nhận được Phi tiêu, khách hàng chọn chế độ <strong>SĂN QUÀ</strong> hoặc <strong>ĐUA TOP</strong> để chơi.</dd>
+									<dd> <img src={btn_sanqua_duatop} class="img-fluid" alt="" /></dd>
+									<dd> -Khách hàng sử dụng chuột (chơi trên PC) hoặc vuốt màn hình (chơi trên điện thoại) để ném phi tiêu vào bảng</dd>
+									<dd> <img src={nem_phi_tieu} class="img-fluid" alt="" /></dd>
+									<dd> <img src={huy_nem_tieu} class="img-fluid" alt="" /></dd>
+									<dd> - Người chơi nhận được số <strong>ĐIỂM</strong> tương ứng với <strong>VỊ TRÍ</strong> phi tiêu tại bảng như sau: (khu vực tô vàng)</dd>
+									<dd> <img src={khu_vuc_1} class="img-fluid" alt="" /></dd>
+									<dd> <img src={khu_vuc_2} class="img-fluid" alt="" /></dd>
+									<dd> <img src={khu_vuc_3} class="img-fluid" alt="" /></dd>
+									<dd> <img src={vong_tron_ngoai} class="img-fluid" alt="" /></dd>
+									<dd> <img src={vong_tron_trong} class="img-fluid" alt="" /></dd>
+								</dl>          
+							</div>
+							{/* <!-- End Tab hd1 -->
+							<!-- Begin Tab hd2 --> */}
+							<div class={tab_2 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd2">
+								<h4 class="font-size-3vw_m font-weight-bold">2. Săn quà</h4>
+								<dl class="font-size-3vw_m">
+									<dd>- Mỗi ngày sẽ có nhiều Phiên <strong>SĂN QUÀ</strong> được diễn ra, người chơi click Tab <strong>GIẢI THƯỞNG</strong> để xem thời gian diễn ra phiên tiếp theo và giải thưởng của phiên đó.</dd>
+									<dd> <img src={tab_giaithuong} class="img-fluid d-block mx-auto" alt="" /></dd>                 
+									<dd>- Trong thời gian diễn ra Phiên săn quà, người chơi chọn Chế độ <strong>SĂN QUÀ</strong> tại Trang chủ để tham gia:</dd>
+									<dd> <img src={che_do_sanqua} width="350" class="img-fluid d-block mx-auto" alt="" /></dd>  
+									<dd>- Tại mỗi Phiên Săn quà, số điểm mặc định ban đầu của mỗi người chơi được quy định cụ thể (Ví dụ: 501/5010/…)</dd>
+               						<dd>- Người chơi sử dụng số Phi tiêu mình có để ném vào bảng, điểm nhận được sau mỗi lần ném sẽ được TRỪ dần vào tổng điểm ban đầu.</dd>
+									<dd>- Trong thời gian quy định, người chơi nào đưa được tổng điểm <strong>VỀ 0 SỚM NHẤT</strong> sẽ là người <strong>THẮNG</strong> cuộc và nhận được giải thưởng của phiên Săn quà, đồng thời phiên chơi đó kết thúc.</dd>
+									<dd>- Trường hợp không có người chơi nào đưa được điểm về 0, giải thưởng sẽ được bảo lưu và cộng dồn vào Phiên chơi tiếp theo.</dd>
+									{/* <dd>- Trường hợp có nhiều tài khoản cùng đưa được điểm về 0 (hoặc cùng có số điểm ít nhất bằng nhau), người thắng cuộc là người đưa được điểm về 0 (hoặc điểm về số thấp nhất) trong thời gian sớm nhất.</dd> */}
+									<dd><em>- Lưu ý: Trường hợp phát sinh tranh chấp, khiếu nại liên quan đến chương trình, Công ty VTC Mobile sẽ trực tiếp giải quyết và quyết định của VTC Mobile là kết quả cuối cùng. Mọi trường hợp gian lận hoặc không trung thực sẽ bị xử lý theo pháp luật.</em></dd>
+									<dd><em>- Đối với khách hàng chơi trên điện thoại Iphone: để trải nghiệm game được tốt nhất, hãy tắt các trang đang mở trên trình duyệt safari/chrome trước khi chơi.</em></dd>           
+								</dl>	
+							</div>
+							{/* <!-- End Tab hd2 -->
+							<!-- Begin Tab hd3 --> */}
+							<div class={tab_3 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd3">
+								<h4 class="font-size-3vw_m font-weight-bold">3. Đua TOP</h4>
+								<dl class="font-size-3vw_m">
+									<dd>- Trong thời gian diễn ra Phiên Đua top, người chơi chọn Chế độ <strong>Đua TOP</strong> tại Trang chủ để tham gia: </dd>
+									<dd> <img src={che_do_duatop} class="img-fluid" alt="" /></dd>  
+									<dd>- Mỗi tài khoản có số điểm mặc định ban đầu là <strong>0 điểm</strong>.</dd>
+									<dd>- Người chơi sử dụng số Phi tiêu mình có để ném vào bảng, số điểm nhận được sau mỗi lần ném sẽ được <strong>CỘNG</strong> dồn vào tổng điểm đang có.</dd>
+									<dd>- Kết thúc Phiên Đua top, tài khoản có tổng điểm <strong>CAO</strong> nhất sẽ là người <strong>THẮNG</strong> cuộc và nhận được giải thưởng.</dd>
+									<dd>- Trường hợp nhiều người chơi có tổng điểm cao nhất bằng nhau, người thắng cuộc là người đạt được số điểm cao nhất trong thời gian sớm nhất.</dd>
+									<dd><em>- Lưu ý: Trong trường hợp phát sinh tranh chấp, khiếu nại liên quan đến chương trình, Công ty VTC Mobile sẽ trực tiếp giải quyết và quyết định của VTC Mobile là kết quả cuối cùng. Mọi trường hợp gian lận hoặc không trung thực sẽ bị xử lý theo pháp luật.</em></dd>       
+									<dd><em>- Đối với khách hàng chơi trên điện thoại Iphone: để trải nghiệm game được tốt nhất, hãy tắt các trang đang mở trên trình duyệt safari/chrome trước khi chơi.</em></dd>   
+								</dl>
+							</div>
+							{/* <!-- End Tab hd3 -->
+							<!-- Begin Tab hd4 --> */}
+							<div class={tab_4 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd4">
+								<h4 class="font-size-3vw_m font-weight-bold">4. Hướng dẫn sử dụng giải thưởng</h4>
+								<dl class="font-size-3vw_m">
+									<dt>- Voucher Scoin:</dt>
+									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ Scoin voucher</strong> và click <span class="text-primary">Mở</span>.</dd>
+									<dd> <img src={voucher_scoin} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Copy <strong>MÃ CODE</strong> và số <strong>SERIAL</strong>: </dd>
+									<dd> <img src={scoin_voucher_10k} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn NẠP GAME =&gt; Điền Tên tài khoản và server =&gt; Chọn phương thức nạp Thẻ cào =&gt; Chọn loại thẻ Scoin =&gt; Điền MÃ CODE và số SERIAL đã copy ở trên.</dd>
+									<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
+									<dd class="font-italic mark">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
+									<dt>- Voucher chuyển khoản ngân hàng:</dt>
+									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ voucher chuyển khoản ngân hàng</strong> và click <span class="text-primary">Mở</span>.</dd>
+									<dd> <img src={voucher_scoin_banktranfer} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Ấn <strong>“Nạp ngay”</strong></dd>
+									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Phương thức nạp Ngân hàng</dd>
+									<dd> <img src={nap_ngan_hang} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Copy <strong>Nội dung chuyển khoản</strong> và paste vào mục <strong>Nội dung</strong> khi bạn thực hiện chuyển khoản vào tài khoản VTC Mobile, số tiền trong voucher sẽ được cộng trực tiếp vào Ví sau khi bạn chuyển khoản thành công.</dd>
+									<dd> <img src={ck_ngan_hang} class="img-fluid" alt="" /></dd>
+									<dd class="font-italic mark">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
+									<dt>- Topup 50k:</dt>
+									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Topup Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
+									<dd> <img src={topup_scoin} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Scoin được tự động cộng vào Ví Scoin của tài khoản </dd>
+									<dt>- Thẻ Scoin:</dt>
+									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn <strong>giải thưởng Thẻ Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
+									<dd> <img src={the_scoin} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Copy <strong>MÃ CODE</strong> và <strong>SERIAL</strong>: </dd>
+									<dd> <img src={scoin_10k} class="img-fluid" alt="" /></dd>
+									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Nạp game/Điền Tên tài khoản và server/ Chọn phương thức nạp Thẻ cào/ Chọn loại thẻ Scoin và điền mã Thẻ và số serial đã copy ở trên.</dd>
+									<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
+						
+								</dl> 
+							</div>
+							{/* <!-- Begin Tab hd5 --> */}
+							<div class={tab_5 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd5">
+								<h4 class="font-size-3vw_m font-weight-bold">5. Hướng dẫn mở link game Phi tiêu từ Facebook của điện thoại</h4>
+								<dl class="font-size-3vw_m">
+									<dd>- Để trải nghiệm game được tốt nhất, Khách hàng lưu ý sử dụng trình duyệt <strong>SAFARI</strong> (đối với điện thoại Iphone) hoặc <strong>CHROME</strong> (đối với điện thoại Android) để mở link game <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> </dd>
+									<dd> Với những khách hàng mở link <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ Facebook của điện thoại, hãy thực hiện theo hướng dẫn dưới đây.</dd>
+									<dt>1.	Đối với điện thoại Iphone: </dt>
+									<dd><strong>Bước 1</strong>: Ấn vào đường link <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ bài viết tại fanpage Scoin (hoặc bài viết bất kỳ trên Facebook)</dd>
+									<dd> <img src={fb_i1} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 2:</strong> Ấn vào dấu ba chấm tại góc phải</dd>
+									<dd> <img src={fb_i2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 3</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN SAFARI</strong> , link game sẽ được mở bằng trình duyệt SAFARI của Iphone</dd>
+									<dd> <img src={fb_i3_i4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 4</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
+									<dd> <img src={fb_i5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dt>2. Đối với điện thoại Android: </dt>
+									<dd><strong>Bước 1:</strong> Ấn vào đường link  <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ bài viết tại fanpage Scoin (hoặc bài viết bất kỳ trên Facebook)</dd>
+									<dd> <img src={fb_a1}  width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 2</strong>: Ấn vào dấu ba chấm tại góc phải</dd>
+									<dd> <img src={fb_a2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 3</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN BROWSER</strong>, link game sẽ được mở bằng trình duyệt mặc định của điện thoại</dd>
+									<dd> <img src={fb_a3_a4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 4</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
+									<dd> <img src={fb_a5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									
+								</dl> 
+							</div>
+							{/* <!-- End Tab hd4 --> */}
+							</div> 
 						
 					</div>
 					{/* <!--End Modal body --> */}
@@ -1092,6 +1441,282 @@ class Lucky_Rotation extends React.Component {
 				</div>
 			</div>
 
+			{/* <!-- The Modal Mở quà--> */}
+			<div class="modal fade" id="Modalmoqua">
+				<div class="modal-dialog modal-moqua_m">
+					<div class="modal-content bg-transparent border-0">
+
+					<div class="modal-header border-0 p-0">
+						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+					</div>
+					
+
+					<div class="modal-body border-0">
+						<div class="mx-auto font-size-14" style={{width: "90%"}}>
+						{(dataItem.Type==='TopupScoin')?(<p style={{textAlign:'center', fontSize:20, color:'green'}}>{dataItem.Message}</p>):(<div></div>)}
+							{(dataItem.Type==='Darts')?(<p style={{textAlign:'center', fontSize:20, color:'green'}}>{dataItem.Message}</p>):(<div></div>)}
+							{(dataItem.Type==='ScoinCard')?(<div class="card-body p-0 text-center">
+								<p class="card-text mb-3 font-size-18 font-weight-bold text-shadow">Thẻ Scoin mệnh giá: <br /> {dataItem.Amount ? this.numberWithCommas(dataItem.Amount) : 0} vnđ</p>
+								<table class="table table-borderless">
+									<tbody>
+									<tr class="border-bottom">
+										<td class="p-1">Mã code:</td>
+										<td class="p-1">{dataItem.Code}</td>
+									</tr>
+									<tr class="border-bottom">
+										<td class="p-1">Serial:</td>
+										<td class="p-1">{dataItem.Serial}</td>
+									</tr>
+									</tbody>
+								</table>
+								<p class="card-text text-secondary">Hạn sử dụng: {dataItem.Expires}</p>
+								<p class="card-text"></p>
+							</div>):(<div></div>)}
+
+							{(dataItem.Type==='ScoinVoucher')?(<div class="card-body p-0 text-center">
+								<p class="card-text mb-3 font-size-18 font-weight-bold text-shadow">Thẻ ScoinVoucher mệnh giá: <br /> {dataItem.Amount ? this.numberWithCommas(dataItem.Amount) : 0} vnđ</p>
+								<table class="table table-borderless">
+									<tbody>
+									<tr class="border-bottom">
+										<td class="p-1">Mã code:</td>
+										<td class="p-1">{dataItem.Code}</td>
+									</tr>
+									<tr class="border-bottom">
+										<td class="p-1">Serial:</td>
+										<td class="p-1">{dataItem.Serial}</td>
+									</tr>
+									</tbody>
+								</table>
+								<p class="card-text text-secondary">Ngày bắt đầu: {dataItem.StartDate} <br />Ngày kết thúc: {dataItem.EndDate}</p>
+								<p class="card-text"></p>
+							</div>):(<div></div>)}
+							
+						</div>
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+
+			{/* <!-- The Modal Mở quà Voucher--> */}
+			<div class="modal fade" id="Modalmoquavoucher">
+				<div class="modal-dialog modal-moqua_m">
+					<div class="modal-content bg-transparent border-0">
+
+					<div class="modal-header border-0 p-0">
+						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+					</div>
+					
+
+					<div class="modal-body border-0">
+						<div class="mx-auto font-size-14" style={{width: "90%"}}>
+							<div class="card-body p-0 text-center">
+								<p class="card-text mb-3 font-size-14 font-weight-bold text-shadow">Tài khoản <span class="text-dark">{dataItem.AccountName}</span> nhận được thẻ Scoin Voucher 20K khi nạp Scoin qua Chuyển khoản Ngân hàng. </p>
+								<table class="table table-borderless mb-2">
+									<tbody>
+									<tr class="border-bottom">
+										<td class="p-1 font-size-14">Bạn hãy nạp Scoin để nhận khuyến mại nhé!</td>
+									</tr>
+									<tr class="border-bottom">
+										<td class="p-1 text-secondary">Hạn sử dụng: {dataItem.ExpiredDate}</td>
+
+									</tr>
+									</tbody>
+								</table>
+								<p class="text-center"><a href="https://scoin.vn/nap-tien#9" title="Nạp Scoin" target="_blank"><img src={btn_nap_scoin} width="80" hspace="10" alt="" /></a></p>
+							</div>
+						</div>
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal banner bảo trì--> */}
+			<div class="modal fade" id="Modalbanner">
+				<div class="modal-dialog">
+					<div class="modal-content bg-transparent border-0">
+					<div class="modal-header border-0 p-0 m-0" style={{zIndex:99999}}>
+						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body border-0 p-0 mt-n4">
+						<img src={banner_thongbao_off} width="100%" alt="" />
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Thông báo thay đổi thể lệ--> */}
+			<div class="modal fade" id="Modalthele">
+				<div class="modal-dialog modal-dangnhap_m">
+					<div class="modal-content bg-transparent border-0">
+					{/* <!-- Modal Header --> */}
+					<div class="modal-header border-0 p-0 m-0" style={{zIndex: 99999}}>
+						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+					</div>
+					{/* <!-- Modal body --> */}
+					<div class="modal-body border-0 mt-n4">
+						<h2 class="font-size-3vw_m pt-4 font-weight-bold text-uppercase text-center">Điều chỉnh thể lệ Săn quà kể từ 8h 8/8/2021</h2>
+						<p class="font-size-3vw_m mb-0 text-center">-  Người chơi chiến thắng <strong>PHẢI</strong> là người đưa tổng điểm <strong>VỀ 0 SỚM NHẤT</strong>.</p>
+						<p class="font-size-3vw_m mb-0 text-center">-  Nếu không có người chơi nào đưa được điểm về 0, giải thưởng được bảo lưu và cộng dồn vào Phiên chơi tiếp theo.</p>
+						<p class="text-center"><a href="/sanqua" title="Đồng ý vào Săn Quà"><img class="mt-2" src={btn_dongy} width="25%" alt="Săn Quà" /></a></p>
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Huong Dan mở phi tiêu từ fb view--> */}
+			<div class="modal fade" id="Modalfbview">
+				<div class="modal-dialog modal-huongdan_m modal-dialog-scrollable">
+					<div class="modal-content bg-transparent border-0">
+
+						<div class="modal-header border-0 p-0">
+							<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body border-0 py-0 mb-2 mt-2 px-3 scroll-modal-body_m">
+							<div class="container mt-2">
+								<h4 class="font-size-3vw_m font-weight-bold">Hướng dẫn mở link game Phi tiêu từ Facebook của điện thoại</h4>
+								<dl class="font-size-3vw_m">                
+									<dd> Khách hàng lưu ý sử dụng trình duyệt <strong>SAFARI</strong> (đối với điện thoại Iphone) hoặc <strong>CHROME</strong> (đối với điện thoại Android) để mở link game <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a></dd>
+									<dt>1.	Đối với điện thoại Iphone: </dt>                
+									<dd><strong>Bước 1:</strong> Ấn vào dấu ba chấm tại góc phải</dd>
+									<dd> <img src={fb_i2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 2</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN SAFARI</strong> , link game sẽ được mở bằng trình duyệt SAFARI của Iphone</dd>
+									<dd> <img src={fb_i3_i4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 3</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
+									<dd> <img src={fb_i5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dt>2. Đối với điện thoại Android: </dt>                
+									<dd><strong>Bước 1</strong>: Ấn vào dấu ba chấm tại góc phải</dd>
+									<dd> <img src={fb_a2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 2</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN BROWSER</strong>, link game sẽ được mở bằng trình duyệt mặc định của điện thoại</dd>
+									<dd> <img src={fb_a3_a4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									<dd><strong>Bước 3</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
+									<dd> <img src={fb_a5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
+									
+								</dl> 
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Chuyển phi tiêu--> */}
+			<div class="modal fade" id="Modalchuyenphitieu">
+				<div class="modal-dialog modal-tangtieu_m">
+					<div class="modal-content bg-transparent border-0">
+
+
+					<div class="modal-header border-0 p-0 text-dark">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+
+					<div class="modal-body border-0 font-size-14">
+						<form class="p-2">
+							<div class="form-group mb-1">
+								<label class="mb-1 font-weight-bold">TÀI KHOẢN: {dataInfoDonate.Username}</label>
+								<button type="button" class="btn btn-block mb-1 py-1 btn-number-phitieu">{dataInfoDonate.Darts} phi tiêu</button>
+								<input id="username" type="text" class="form-control form-control-sm mb-1 font-size-14" placeholder="Tên tài khoản người nhận" height="40px"></input>
+								<input id="numberDart" type="text" class="form-control form-control-sm mb-1 font-size-14" placeholder="Số phi tiêu" height="40px"></input>
+								<p class="font-italic mb-2">(Số phi tiêu tối đa có thể chuyển: <strong>{dataInfoDonate.Darts} phi tiêu</strong>)</p>
+							</div>
+
+							<div class="form-row">
+								<div class="col">
+								<input id="code" type="text" class="form-control form-control-sm font-size-14" placeholder="Mã xác nhận" name="c" height="40px"></input>
+								</div>
+								<div class="col pt-1">
+								<span class="mark font-italic">{dataInfoDonate.ConfirmCode}</span>
+								</div>
+							</div>
+
+							<a title="Xác nhận" data-toggle="modal"><img src={btn_xac_nhan} width="100" class="d-block mx-auto mt-2" alt="" onClick={this.comfirmDonate} /></a>
+						</form> 
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Điểm danh thành công--> */}
+			<div class="modal fade" id="Modalddthanhcong">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content border-0">
+
+					<div class="modal-header border-0 p-0 text-dark">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+
+					<div class="modal-body border-0 pt-0 text-center">
+						{(rollup)?(<p class="text-info font-size-18 mb-2"><img src={icon_success} width="24" class="" alt="" /> {type_action} thành công</p>):(
+							<p class="text-info font-size-18 mb-2">Thông Báo</p>
+						)}
+						
+						<p class="text-red font-size-18">{message_rollup}</p>
+					</div>
+
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Chon Room--> */}
+			<div class="modal fade" id="Modalchonroom">
+				<div class="modal-dialog modal-chonroom_m modal-dialog-scrollable">
+					<div class="modal-content bg-transparent border-0">
+
+					<div class="modal-header border-0 p-0">
+						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
+					</div>
+
+					<div class="modal-body border-0 py-0 mb-2 mt-2 px-3 scroll-modal-body_m">
+						{listSanqua.map((obj, key) => (
+
+							<a title="Chơi ngay" key={key} onClick={()=>this.playSanqua(obj)}>    	
+								<div class="mx-0 mb-1 session-chonroom_m d-flex position-relative">
+									<div class="scr-c_m font-size-3vw_m text-uppercase text-warning-50">
+										<img src={icon_scoin} width="24" alt="" /> <span class="pl-1">Tổng điểm: {obj.PointRule}</span>
+									</div>
+									<div class="scr-status-open_m font-size-3vw_m">
+										<p class="pt-5px pl-2 text-white">Đang diễn ra</p>
+									</div>
+									<div class="scr-info_m font-size-3vw_m text-white">
+										<p class="font-italic_m mb-0 pb-3px">Bắt đầu: {this.timeEnd(obj.StartTime)}</p>
+										<p class="text-uppercase mb-0">Giải thưởng: {this.showGiaithuong(obj.Awards)}</p>
+									</div>
+									<div class="scr-playnow_m font-size-3vw_m text-uppercase text-warning">
+										Chơi Ngay
+									</div>
+								</div>
+							</a>
+						))}			
+						
+						
+						
+						
+						
+					</div>
+					</div>
+				</div>
+			</div>
+
+			{/* <!-- The Modal Điểm danh thành công--> */}
+			<div class="modal fade" id="ModalListEmpty">
+				<div class="modal-dialog modal-sm">
+					<div class="modal-content border-0">
+					<div class="modal-header border-0 p-0 text-dark">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body border-0 pt-0 text-center">
+						<p class="text-info font-size-18 mb-2">Thông Báo</p>
+						<div class="text-red font-size-18" dangerouslySetInnerHTML={{__html: 'Hiện không có phiên chơi Săn Quà nào đang chạy. </br>Bạn vui lòng vào mục Trang Chủ -> Giải Thưởng để xem lịch chạy các phiên sắp tới nhé!'}}></div>
+					</div>
+
+					</div>
+				</div>
+			</div>
 
 				
 				<ReactResizeDetector handleWidth={true} handleHeight={true} onResize={this.onResize} />
@@ -1102,6 +1727,11 @@ class Lucky_Rotation extends React.Component {
 }
 
 const mapStateToProps = state => ({
+	dataSanqua: state.lucky.dataSanqua,
+	dataCheckRollup: state.lucky.dataCheckRollup,
+	dataRollup: state.lucky.dataRollup,
+	dataInfoDonate: state.lucky.dataInfoDonate,
+	dataDonate: state.lucky.dataDonate,
 	dataProfile: state.profile.data,
 	dataLuckyInfo: state.lucky.dataLuckyInfo,
 	dataSesions: state.lucky.dataSesions,
@@ -1122,23 +1752,23 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-	getDetailData,
-	getRotationDetailData,
-	getRotationDetailDataUser,
 	pickCard,
 	getInfoUser,
-	buyTurn,
 	getMoreSessions,
 	getItemAward,
 	getHistoryTuDo,
 	getData,
 	getTuDo,
-	getCodeBonus,
 	getVinhDanh,
 	getLuckyInfo,
 	getLuckyItems,
 	userLogout,
-	getDartScore
+	gds,
+	getRollup,
+	getDonate,
+	getInfoDonate,
+	checkRollup,
+	getListSanQua
 }, dispatch)
 
 

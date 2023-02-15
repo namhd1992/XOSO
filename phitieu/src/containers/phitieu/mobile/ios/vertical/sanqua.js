@@ -1,27 +1,21 @@
 import React from 'react'
 import { bindActionCreators } from 'redux'
-import Pagination from "react-js-pagination";
 import axios from 'axios';
-import { render } from 'react-dom';
 // import { Stage, Layer, Image, Text } from 'react-konva';
 import Konva from 'konva';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import Ultilities from '../../../../../Ultilities/global';
 import '../../css/style.css';
-import DeviceOrientation, { Orientation } from 'react-screen-orientation';
 import {
-	getDetailData,
-	getRotationDetailData,
-	getRotationDetailDataUser,
+	getMoreSessions,
 	pickCard,
-	buyTurn,
 	getTuDo,
 	getHistoryTuDo,
-	getCodeBonus,
 	getLuckyInfo,
 	getLuckyItems,
 	getInfoUser,
 	userLogout,
-	getDartScore,
+	gds,
 	getItemAward
 } from '../../../../../modules/lucky'
 
@@ -35,18 +29,14 @@ import img_checkbox_none from '../../images/img-checkbox-none.png';
 import img_checkbox_checked from '../../images/img-checkbox-checked.png';
 import btn_thoat from '../../images/btn-thoat.png';
 import btn_duatop from '../../images/btn-duatop.png';
-import vip_kimcuong from '../../images/vip-kimcuong.png';
-import vip_bachkim from '../../images/vip-bachkim.png';
-import vip_vang from '../../images/vip-vang.png';
-import vip_bac from '../../images/vip-bac.png';
-import vip_dong from '../../images/vip-dong.png';
-import rotate from '../../images/rotate.png';
 
-import bg_page_sanqua from '../../images/bg_sanqua_dung.jpg';
+
+import btn_nap_scoin from '../../images/btn-nap-scoin.png';
+
+import bg_page_sanqua from '../../images/bg_sanqua_dung.png';
 
 
 
-import ReactResizeDetector from 'react-resize-detector'
 import $ from 'jquery';
 import 'bootstrap';
 
@@ -56,14 +46,16 @@ const styles = {
 	},
 };
 
-var startX=190, endX=485, startY=368, endY=665;
-var img_w=682;
-var img_h=1280
+var startX=300, endX=828, startY=640, endY=1168;
+var Dart_Center_X=565;
+var Dart_Center_Y=900;
+var SEGMENTS = [17, 27, 143, 163, 243, 263];
+
+var img_w=960;
+var img_h=1800
 var award_open=true;
+var st_touch={};
 var n=0;
-var animId;
-var dartTimerId = 1;
-var FLIGHT_ANIM_DELAY = 20;
 var SEGMENT_COUNT = 20;
 var width = window.innerWidth;
 var height = window.innerHeight;
@@ -76,12 +68,7 @@ var heightFrame = spriteHeight;
 var srcX=0; 
 var srcY=0; 
 
-var Dart_Center_X=338;
-var Dart_Center_Y=518;
-var radius=108;
 
-var SEGMENT_SIZE = Math.PI/10.0;
-var SEGMENTS = [6, 16, 78, 90, 136, 148];
 var SEGMENT_NAMES = ['50','25','value','tripple','value','double','out'];
 var SCORE_VALUES = [6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19, 3, 17, 2, 15, 10, 6];
 
@@ -150,7 +137,7 @@ class Lucky_Rotation extends React.Component {
 			isPlay:true,
 			msg:'',
 			isChangetab:false,
-			horizontal:false,
+			vertical:false,
 			bgGameImg:{},
 			rect_timing:{},
 			username:{}, 
@@ -158,54 +145,92 @@ class Lucky_Rotation extends React.Component {
 			tg_conlai: {}, 
 			txt_points:{},
 			list_top_user:[],
-			none_multi:false
+			none_multi:false,
+			mg_left:0,
+			delta:0,
+			height_plus:0,
+			awardsContent:"",
+			duatop:false,
+			isLoading:true,
+			code_key:'',
+			delta:0
 		};
 	}
 	componentWillMount(){
-		console.log(document.fullscreenElement)
 		this.onResize();
 		window.addEventListener("resize", this.setScreenOrientation);
 		window.addEventListener("visibilitychange", this.visibilityChange);
 		window.removeEventListener('scroll', this.handleScroll);
-		this.setState({innerWidth:window.innerWidth});
-		// if(window.innerWidth < window.innerHeight){
-		// 	this.setState({horizontal: false})
-		// }else{
-		// 	this.setState({horizontal: true})
-		// }
 		var delta=window.innerWidth/img_w;
+
+		if(window.innerWidth > window.innerHeight){
+			this.setState({vertical: false})
+		}else{
+			this.setState({vertical: true})
+		}
+
+		this.setState({delta:delta, innerWidth:window.innerWidth})
+		
+		Dart_Center_X=Dart_Center_X*delta;
+		Dart_Center_Y=Dart_Center_Y*delta;
 		startX=startX*delta;
 		endX=endX*delta;
 		startY=startY*delta;
 		endY=endY*delta;
-		Dart_Center_X=Dart_Center_X*delta;
-		Dart_Center_Y=Dart_Center_Y*delta;
+		
+		
 		SEGMENTS=SEGMENTS.map(v => {
 			return v*delta
 		})
-		console.log('Dart_Center_X',Dart_Center_X)
+		
 	}
 
 
 
 
 	componentDidMount(){
-		const {horizontal}=this.state;
+		
+		const {vertical}=this.state;
 		var deltal_img=img_w/img_h;
 		var deltal_device=width/height;
 		var bg_x=0, bg_y=0;
 		var list_top_user=[];
 		var user = JSON.parse(localStorage.getItem("user"));
+		var mg_left=0;
+		var delta=0;
+		var height_plus=0;
+		// var canvas=document.getElementById("canvas");
+		// canvas.addEventListener ("mouseout", this.checkoutCanvas);
+
 
 		// this.toggleFullScreen();
-		if(width/height > 2){
-			bg_x=width;
-			bg_y=height*deltal_img/deltal_device;
+
+		// alert(`width: ${width} height: ${height}`)
+
+		bg_y=height;
+		bg_x=width*deltal_img/deltal_device;
+		mg_left=(width-bg_x)/2;
+		if(mg_left>30){
+			height_plus=mg_left+32
 		}else{
-			bg_x=width;
-			bg_y=height*deltal_device/deltal_img;
+			height_plus=mg_left+26
 		}
+		this.setState({mg_left:mg_left, height_plus:height_plus})
+
+		delta=img_w/bg_x
+		
+
+		
+		// if(height/width > 2){
+		// 	bg_x=width;
+		// 	bg_y=height*deltal_device/deltal_img;
+		// }else{
+		// 	bg_y=height;
+		// 	bg_x=width*deltal_img/deltal_device;
+		// }
+		// alert(`mg_left: ${mg_left}`)
 		width_bgImg=bg_y;
+		if(vertical){
 			var stage = new Konva.Stage({
 				container: 'canvas',
 				width: width,
@@ -232,12 +257,30 @@ class Lucky_Rotation extends React.Component {
 			this.setState({stage:stage, layer:layer})
 			var _this=this
 
+			var imageObj = new Image();
+			imageObj.onload = function () {
+				var darthVaderImg = new Konva.Image({
+					image: imageObj,
+					x: 0,
+					y: 0,
+					width: 28,
+					height: 120,
+					draggable: true,
+					visible:false
+					});
 			
+					layer.add(darthVaderImg);
+					stage.add(layer);
+					_this.setState({darthVaderImg:darthVaderImg})
+			};
+			imageObj.src = phitieu;
+
+
 			var bggame = new Image();
 			bggame.onload = function () {
 				var bgGameImg = new Konva.Image({
 					image: bggame,
-					x: 0,
+					x: mg_left,
 					y: 0,
 					width: bg_x,
 					height: bg_y,
@@ -254,8 +297,8 @@ class Lucky_Rotation extends React.Component {
 			timing.onload = function () {
 				var timingImg = new Konva.Image({
 					image: timing,
-					x: bg_x*0.37,
-					y: 5,
+					x: bg_x*0.37+mg_left,
+					y: bg_y*0.17,
 					width: 25,
 					height: 25,
 					});
@@ -270,8 +313,8 @@ class Lucky_Rotation extends React.Component {
 			bg_timing.onload = function () {
 				var rect_bg_timing = new Konva.Image({
 					image: bg_timing,
-					x: bg_x*0.41,
-					y: 5,
+					x: bg_x*0.43+mg_left,
+					y: bg_y*0.165,
 					width: 110,
 					height: 6,
 					});
@@ -284,17 +327,17 @@ class Lucky_Rotation extends React.Component {
 
 
 			var rect_timing = new Konva.Rect({
-				x: bg_x*0.41,
-				y: 5,
+				x: bg_x*0.43+mg_left,
+				y: bg_y*0.165,
 				width: 110,
-				height: 6,
+				height: 5.5,
 				fill: 'yellow',
 				shadowBlur: 10,
 				cornerRadius: 10,
 			});
 
 			var username = new Konva.Text({
-				x: bg_x*0.65,
+				x: bg_x*0.63+mg_left,
 				y: 5,
 				text:user.Username,
 				fontSize: 13,
@@ -306,7 +349,7 @@ class Lucky_Rotation extends React.Component {
 
 
 			 var vip_level = new Konva.Text({
-				x: bg_x*0.65,
+				x: bg_x*0.63+mg_left,
 				y: 20,
 				text:this.getLevelUser(user),
 				fontSize: 12,
@@ -317,8 +360,8 @@ class Lucky_Rotation extends React.Component {
 			 });
 
 			var tg_conlai = new Konva.Text({
-				x: bg_x*0.40,
-				y: bg_y*0.02,
+				x: bg_x*0.40+mg_left,
+				y: bg_y*0.17,
 				text:"Còn: 0h : 0p : 0s",
 				fontSize: 14,
 				fontFamily: 'Calibri',
@@ -329,36 +372,36 @@ class Lucky_Rotation extends React.Component {
 			 });
 
 			 var tieuconlai = new Konva.Text({
-				x: bg_x*0.41,
-				y: bg_y*0.10,
+				x: bg_x*0.08+mg_left,
+				y: bg_y*0.23,
 				text:"Số phi tiêu còn lại: 0",
 				fontSize: 14,
 				fontFamily: 'Calibri',
 				fill: 'yellow',
 				width: 380,
 				padding: 10,
-				align: 'left',
+				align: 'center',
 			 });
 
-			 var giaithuong = new Konva.Text({
-				x: bg_x*0.35,
-				y: bg_y*0.15,
-				text:"Nhanh tay giật giải IP12 trị giá 50 củ",
-				fontSize: 14,
-				fontFamily: 'Calibri',
-				fill: 'yellow',
-				width: 380,
-				padding: 10,
-				align: 'left',
-			 });
+			//  var giaithuong = new Konva.Text({
+			// 	x: bg_x*0.35,
+			// 	y: bg_y*0.15,
+			// 	text:"Nhanh tay giật giải IP12 trị giá 50 củ",
+			// 	fontSize: 14,
+			// 	fontFamily: 'Calibri',
+			// 	fill: 'yellow',
+			// 	width: 380,
+			// 	padding: 10,
+			// 	align: 'left',
+			//  });
 
 
 
 			var auto_text = new Konva.Text({
 				x: 35,
-				y: bg_y*0.90,
+				y: bg_y*0.855,
 				text: "PHÓNG TIÊU TỰ ĐỘNG",
-				fontSize: 15,
+				fontSize: 13,
 				fontStyle:"bold",
 				fontFamily: 'Calibri',
 				fill: 'yellow',
@@ -367,10 +410,10 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var tong_diem = new Konva.Text({
-				x: bg_x*0.1,
-				y: bg_y*0.55,
+				x: bg_x*0.15+mg_left,
+				y: bg_y*0.685,
 				text: "TỔNG ĐIỂM",
-				fontSize: 15,
+				fontSize: 13,
 				fontStyle:"bold",
 				fontFamily: 'Calibri',
 				fill: 'yellow',
@@ -381,8 +424,8 @@ class Lucky_Rotation extends React.Component {
 			
 
 			var txt_points = new Konva.Text({
-				x: bg_x*0.1,
-				y: bg_y*0.65,
+				x: bg_x*0.15+mg_left,
+				y: bg_y*0.74,
 				text: "0000",
 				fontSize: 16,
 				fontFamily: 'Calibri',
@@ -393,10 +436,10 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var ds_top = new Konva.Text({
-				x: bg_x*0.71,
-				y: bg_y*0.27,
+				x: bg_x*0.50+mg_left,
+				y: bg_y*0.69,
 				text:"DANH SÁCH TOP",
-				fontSize: 15,
+				fontSize: 13,
 				fontFamily: 'Calibri',
 				fill: 'yellow',
 				width: 300,
@@ -406,8 +449,8 @@ class Lucky_Rotation extends React.Component {
 
 
 			var top_1 = new Konva.Text({
-				x: bg_x*0.71,
-				y: bg_y*0.36,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.735,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -418,8 +461,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_2 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.41,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.755,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -430,8 +473,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_3 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.46,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.775,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -442,8 +485,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_4 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.51,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.795,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -454,8 +497,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_5 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.56,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.815,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -466,8 +509,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_6 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.61,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.835,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -478,8 +521,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_7 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.66,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.855,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -491,8 +534,8 @@ class Lucky_Rotation extends React.Component {
 
 
 			var top_8 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.71,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.875,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -503,8 +546,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_9 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.76,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.895,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -515,8 +558,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var top_10 = new Konva.Text({
-				x: bg_x*0.705,
-				y: bg_y*0.81,
+				x: bg_x*0.51+mg_left,
+				y: bg_y*0.915,
 				text:"",
 				fontSize: 11,
 				fontFamily: 'Calibri',
@@ -526,7 +569,7 @@ class Lucky_Rotation extends React.Component {
 				align: 'left',
 			});
 
-			layer.add(giaithuong)
+			// layer.add(giaithuong)
 			layer.add(tieuconlai)
 			layer.add(rect_timing);
 			layer.add(username);
@@ -553,6 +596,7 @@ class Lucky_Rotation extends React.Component {
 				this.getLuckyInfo(1);
 			})
 		
+			this.getMoreSessions();
 
 
 			
@@ -619,9 +663,7 @@ class Lucky_Rotation extends React.Component {
 				_this.setState({FullImg:FullImg})
 			};
 			btnFullScreen.src = btn_fullscreen;
-
-
-
+		}
 		
 		this.setState({user:user})
 
@@ -643,14 +685,14 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	getLuckyInfo=(type)=>{
-		const {tieuconlai, username, vip_level, txt_points, tg_conlai, list_top_user}=this.state;
-		console.log(username)
+		const {tieuconlai, username, txt_points, list_top_user}=this.state;
+		
 		var user = JSON.parse(localStorage.getItem("user"));
 		this.props.getLuckyInfo(type, user.Token).then(()=>{
 			var data=this.props.dataLuckyInfo;
 			if(data!==undefined){
 				if(data.Status===0){
-					this.setState({data:data.Data, countDart: data.Data.AddInfo.Darts, points_sanqua: data.Data.AddInfo.Points, listTop:data.Data.AddInfo.TopUsers, sessionId: data.Data.SessionId})
+					this.setState({data:data.Data,code_key:data.Data.Code, countDart: data.Data.AddInfo.Darts, points_sanqua: data.Data.AddInfo.Points,isLoading:true, listTop:data.Data.AddInfo.TopUsers, sessionId: data.Data.SessionId, awardsContent: data.Data.Awards})
 					
 					username.text(user.Username)
 					this.getLevelUser(user)
@@ -662,7 +704,7 @@ class Lucky_Rotation extends React.Component {
 					}
 					this.getStatus(data.Data)
 				}else if(data.Status===2){
-					this.setState({msg:'Hiện tại chưa đến giờ săn quà, mời bạn sang tham gia Đua TOP'})
+					this.setState({msg:'Hiện tại phiên chơi đã kết thúc. Mời bạn sang tham gia Đua TOP.'})
 					$('#Modalnone').modal('show');
 				}else if(data.Status===3){
 					this.logoutAction();
@@ -671,6 +713,34 @@ class Lucky_Rotation extends React.Component {
 				}
 			}
 		})
+	}
+
+	getMoreSessions=()=>{
+		this.props.getMoreSessions().then(()=>{
+			var data=this.props.dataSesions;
+			if(data!==undefined){
+				if(data.Status===0){
+					var list=data.Data.filter( i => i.SessionType===2 );
+					var pos = list.map(function(e) { return e.Status; }).indexOf(1);
+					if(pos!==-1){
+						this.setState({duatop:true})
+					}else{
+						this.setState({msg:"Phiên chơi đã kết thúc!"})
+					}
+				}else if(data.Status===3){
+					this.logoutAction();
+				}else{
+					console.log("Lỗi")
+				}
+			}
+		})
+	}
+
+	checkoutCanvas=()=>{
+		const {stage, darthVaderImg}=this.state;
+		if(JSON.stringify(darthVaderImg) !== '{}'){
+			darthVaderImg.hide();
+		}
 	}
 	
 	getLevelUser=(user)=>{
@@ -695,10 +765,9 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	formatText=(data)=>{
-		var name=data.Username + ' '.repeat(5+ (14-data.Username.length)*2)
+		var name=data.Username + ' '.repeat((14-data.Username.length)*2)
 		var str=name+data.Points;
 		return str;
-
 	}
 
 	logoutAction = () => {
@@ -721,7 +790,7 @@ class Lucky_Rotation extends React.Component {
 				"token": user.Token,
 			}
 		}
-		axios.get('https://api.splay.vn/luckywheel/luckywheel/user-signout/', header).then(function (response) {
+		axios.get(Ultilities.base_url() + 'darts/user-signout/', header).then(function (response) {
 			console.log(response)
 		})
 	}
@@ -763,7 +832,7 @@ class Lucky_Rotation extends React.Component {
 	//   }
 
 	toggleFullScreen() {
-		console.log('AAAAAAAAAAAAA', document.fullscreenElement)
+		
 		var elem = document.getElementById("game");
 		if (elem.requestFullscreen) {
 			elem.requestFullscreen().catch(err => {
@@ -824,7 +893,7 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	timeRemain=(times)=>{
-		const {tg_conlai, data}=this.state;
+		const {tg_conlai}=this.state;
 		var _this=this;
 		setInterval(()=>{
 			var time=(times-Date.now())/1000;
@@ -867,10 +936,11 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	touchStart=(e)=>{
-		console.log('AAAAAAAAAA')
+		
 		// console.log("touchStart",e.touches)
 		const {stage, layer, darthVaderImg, dartFlightImg, score_text, text_warning}=this.state;
 		var _this=this;
+		clearTimeout(st_touch);
 		if(JSON.stringify(dartFlightImg) !== '{}'){
 			dartFlightImg.remove();
 		}
@@ -885,23 +955,11 @@ class Lucky_Rotation extends React.Component {
 
 		if(e.touches.length===1){
 			var touchPos = stage.getPointerPosition();
-			var imageObj = new Image();
-			imageObj.onload = function () {
-				var darthVaderImg = new Konva.Image({
-					image: imageObj,
-					x: touchPos.x-widthFrame/2,
-					y: touchPos.y-heightFrame/2,
-					width: 28,
-					height: 120,
-					draggable: true,
-					});
-			
-					layer.add(darthVaderImg);
-					stage.add(layer);
-					_this.setState({darthVaderImg:darthVaderImg})
-			};
-			imageObj.src = phitieu;
-			
+			var x= touchPos.x-widthFrame/2;
+			var y= touchPos.y-heightFrame/2;
+			darthVaderImg.x(x);
+			darthVaderImg.y(y);
+			darthVaderImg.show();
 			this.setState({dartPositionY:touchPos.y, none_multi:true})
 		}else{
 			this.setState({none_multi:false})
@@ -911,22 +969,109 @@ class Lucky_Rotation extends React.Component {
 
 	touchEnd=(e)=>{
 		// console.log("touchEnd", e.touches)
-		const {stage, darthVaderImg, dartPositionY, isPlay, none_multi, countDart}=this.state;
+		const {mg_left,tieuconlai, txt_points, list_top_user, awardsContent,stage, darthVaderImg, dartPositionY, isPlay, none_multi, countDart,  sessionId, auto_play, code_key, height_plus, delta}=this.state;
+		var user = JSON.parse(localStorage.getItem("user"));
 		var _this=this;
 		var arr=[];
 		if(none_multi){
 			if(isPlay){
 				if(countDart>0){
 					var touchPos = stage.getPointerPosition();
+					var x=touchPos.x;
+					var y=touchPos.y;
 					curFrame=0;
 					n=0;
-					if(dartPositionY >touchPos.y){
-						arr=this.getDealtal(touchPos.x, touchPos.y)
-						this.draw(touchPos.x, arr[0], touchPos.y, arr[1])
-						this.fireDart(touchPos.x + arr[0], touchPos.y-heightFrame/2 + 12 + arr[1])
+					var plus=heightFrame/2 - height_plus;
+					if(dartPositionY >y){
+						this.props.gds(1,sessionId, user.Token, code_key, "iosp", x, y, plus, delta).then(()=>{
+							var data=this.props.dataUserSpin;
+							var deltaX=0;
+							var deltaY=0;
+							if(data.Status===0){
+								var dx = Dart_Center_X - data.TargetX;
+								var dy = Dart_Center_Y - data.TargetY;
+
+								var delta = Math.sqrt(dx*dx+dy*dy);
+								if(mg_left >30){
+									if(data.TargetX-5>Dart_Center_X){
+										deltaX=2
+									}else if(Dart_Center_X > data.TargetX+5){
+										deltaX=2
+									}
+
+									if(data.TargetY>Dart_Center_Y){
+										deltaY=25.5
+									}else{
+										deltaY=4
+									}
+									this.draw(x-deltaX, data.TargetX - x, y-deltaY, data.TargetY - y)
+								}else{
+									if(delta < 22){
+										deltaX=4;
+										deltaY=-15;
+									}else if(delta > 22 && delta < 40){
+										deltaX=2;
+										deltaY=-3;
+									}else{
+										if(data.TargetX>Dart_Center_X){
+											deltaX=12
+										}else if(Dart_Center_X > data.TargetX){
+											deltaX=-4
+										}
+
+										if(data.TargetY>Dart_Center_Y){
+											deltaY=-4
+										}else if(Dart_Center_Y > data.TargetY){
+											deltaY=-12
+										}
+									}
+
+									this.draw(x-deltaX, data.TargetX - x, y-deltaY, data.TargetY - y)
+									// this.draw(x-7, data.TargetX - x, y, data.TargetY - y)
+								}
+								
+	
+								if(data.Darts===0){
+									$('#ThongBao').modal('show');
+								}
+	
+								if(data.Points===0){
+									if(auto_play){
+										clearInterval(this.state.intervalId);
+									}
+									$('#myModalchucmung').modal('show');
+								}
+	
+								
+								setTimeout(()=>{
+									tieuconlai.text(awardsContent)
+								}, 5000);
+								setTimeout(()=>{
+									this.showScore(data.Score);
+									tieuconlai.text(`Số phi tiêu còn lại: ${data.Darts}`);
+									txt_points.text(data.Points)
+									var list_top=data.TopList;
+									for (let i = 0; i < list_top.length; i++) {
+										list_top_user[i].text(this.formatText(list_top[i]))
+									}
+									this.setState({countDart: data.Darts, points_sanqua: data.Points, listTop:data.TopList})
+								}, 400);
+								
+							}else if(data.Status===2){
+								this.setState({listTop:data.Data,isLoading:false, duatop:false, msg:'Phiên chơi đã kết thúc!'}, ()=>{
+									$('#Modalnone').modal('show');
+								})
+								
+							}else if(data.Status===3){
+								this.logoutAction();
+							}else if(data.Status===5){
+								this.setState({msg_err:'Có lỗi xảy ra!'}, ()=>{
+									$('#Error').modal('show');
+								})
+							}
+						})
 					}else{
 						this.showTextWarning()
-						// alert("vuốt lên để phi tiêu")
 					}
 					this.setState({isPlay:false})
 				}else{
@@ -937,15 +1082,15 @@ class Lucky_Rotation extends React.Component {
 		
 		
 		darthVaderImg.hide();
-		setTimeout(()=>{
+		st_touch=setTimeout(()=>{
 			_this.setState({isPlay:true})
-		}, 1800);
+		}, 500);
 	}
 
 
 	touchMove=(e)=>{
 		// console.log("touchMove",e.touches)
-		const {stage, layer, darthVaderImg, isPlay, none_multi}=this.state;
+		const {darthVaderImg, none_multi}=this.state;
 
 		if(none_multi){
 			if(JSON.stringify(darthVaderImg) !== '{}'){
@@ -966,11 +1111,11 @@ class Lucky_Rotation extends React.Component {
 
 
 	draw=(x,deltalX, y, deltalY)=>{
-		console.log('deltalX:', deltalX)
+		
 		var _this=this;
-		var newX=x + deltalX/13*n;
-		var newY=y + deltalY/13*n;
-		console.log("newX:", newX, "newY:",newY)
+		var newX=x + deltalX/12*n;
+		var newY=y + deltalY/12*n;
+		// console.log("newX:", newX, "newY:",newY)
 		const {stage, layer}=this.state;
 		var touchPos = stage.getPointerPosition();
 		this.updateFrame();
@@ -984,7 +1129,7 @@ class Lucky_Rotation extends React.Component {
 				height: heightFrame,
 				// visible:false
 				});
-			console.log(dartFlightImg)
+			// console.log(dartFlightImg)
 			dartFlightImg.crop({x:srcX, y:srcY, width: widthFrame, height: heightFrame})
 			layer.add(dartFlightImg);
 			stage.add(layer);
@@ -992,8 +1137,9 @@ class Lucky_Rotation extends React.Component {
 			if(curFrame <= 12){
 				setTimeout(()=>{
 					// dartFlightImg.remove(); 
-					_this.draw(x,deltalX,y,deltalY) 
 					n=n+1
+					_this.draw(x,deltalX,y,deltalY) 
+					
 				}, 25);
 				setTimeout(()=>{
 					dartFlightImg.remove(); 
@@ -1005,122 +1151,8 @@ class Lucky_Rotation extends React.Component {
 		dartFlight.src = dart_player;
 	}
 
-
-	getDealtal=(xpos,ypos)=>{
-		var dx = Dart_Center_X - xpos;
-		var dy = Dart_Center_Y - ypos;
-		var x=0;
-		var y=0;
-
-		var delta = Math.sqrt(dx*dx+dy*dy);
-
-		if(delta<10){
-			x=this.getRandomInt(25, -25)
-			y=this.getRandomInt(25, -25)
-		}else if(delta >10 && delta <= 60){
-			x=this.getRandomInt(35, -35)
-			y=this.getRandomInt(35, -35)
-		}else if(delta >60 && delta <= 100){
-			x=this.getRandomInt(45, -45)
-			y=this.getRandomInt(45, -45)
-		}else if(delta >100 && delta <= 130){
-			x=this.getRandomInt(50, -50)
-			y=this.getRandomInt(50, -50)
-		}
-		return [x,y];
-	}
-
-	fireDart=(tarX, tarY)=> {
-		this.computeHit(tarX,tarY);
-		this.generateScore();
-	}
-
-	
-    computeHit=(xpos,ypos)=> {
-
-		var dx = Dart_Center_X - xpos;
-		var dy = Dart_Center_Y - ypos;
-	
-		// var angle = Math.atan2(dx,dy)-angleOffset*2;
-		var angle = Math.atan2(dy,dx);
-		var delta = Math.sqrt(dx*dx+dy*dy);
-
-
-		var sg = 0;
-		for (var i = 0; i < 6; i++) {
-			if (delta > SEGMENTS[i])
-			sg = i+1;
-		}
-
-		segmentType = sg;
-		segmentIndex = Math.round(-angle * (180.0/Math.PI)+180.0);
-	
-	
-		segment = Math.round((segmentIndex)  / (360.0/SEGMENT_COUNT));
-	
-	
-	}
-
-	generateScore=()=> {
-		const {tieuconlai, txt_points, sessionId, list_top_user}=this.state;
-		var user = JSON.parse(localStorage.getItem("user"));
-		var _this=this;
-		if (SEGMENT_NAMES[segmentType] == 'out') {
-	
-			totalScore = 0; // mimo herni pole
-	
-		} else
-		if (SEGMENT_NAMES[segmentType] == '50') {
-	
-			totalScore = 50; // cisty stred
-	
-			} else {
-	
-			if (SEGMENT_NAMES[segmentType] == '25') {
-	
-				totalScore = 25; // sirsi stred
-	
-			} else {
-	
-				totalScore = SCORE_VALUES[segment];
-	
-				if (SEGMENT_NAMES[segmentType] == 'double') totalScore *= 2;  // vnejsi okraj - double
-				if (SEGMENT_NAMES[segmentType] == 'tripple') totalScore *= 3; // prostredni pole - tripple
-			}
-		}
-
-		
-
-		setTimeout(()=>{
-			this.showScore(totalScore);
-			this.props.getDartScore(1, totalScore,sessionId, user.Token).then(()=>{
-				var data=this.props.dataUserSpin;
-				if(data.Status===0){
-					if(data.Darts===0){
-						$('#ThongBao').modal('show');
-					}
-					tieuconlai.text(`Số phi tiêu còn lại: ${data.Darts}`)
-					txt_points.text(data.Points)
-					var list_top=data.TopList;
-					for (let i = 0; i < list_top.length; i++) {
-						list_top_user[i].text(this.formatText(list_top[i]))
-					}
-					this.setState({countDart: data.Darts, points_sanqua: data.Points, listTop:data.TopList})
-				}else if(data.Status===2){
-					this.setState({listTop:data.Data, msg:'Quà đã có chủ, phiên chơi kết thúc, mời bạn sang tham gia Đua TOP'}, ()=>{
-						$('#Modalnone').modal('show');
-					})
-					
-				}
-			})
-		}, 400);
-		
-			// console.log('AA:', totalScore)
-	}
-
-
 	check_auto=()=>{
-		const {checkboxImg, uncheckboxImg, auto_play, dartFlightImg}=this.state;
+		const {checkboxImg, uncheckboxImg, auto_play}=this.state;
 		this.setState({auto_play:!auto_play},()=>{
 			if(this.state.auto_play){
 				checkboxImg.hide();
@@ -1137,18 +1169,60 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	autoPlay=()=>{
-		const {checkboxImg, uncheckboxImg, auto_play, dartFlightImg, countDart, isChangetab}=this.state;
+		const {tieuconlai, txt_points, list_top_user, awardsContent,dartFlightImg, isChangetab, countDart,auto_play,  sessionId, code_key, height_plus, delta}=this.state;
+		var user = JSON.parse(localStorage.getItem("user"));
 		curFrame=0;
+		var plus=heightFrame/2 - height_plus
 		if(countDart>0){
 			if(JSON.stringify(dartFlightImg) !== '{}'){
 				dartFlightImg.remove();
 			}
-			var x=this.getRandomInt(startX, endX);
-			var y=this.getRandomInt(startY, endY);
-			if(!isChangetab){
-				this.draw(x,0,y+heightFrame/2,0);
-			}
-			this.fireDart(x, y + 12)
+			this.props.gds(1,sessionId, user.Token, code_key, "iosp", 0, 0, 0, delta).then(()=>{
+				var data=this.props.dataUserSpin;
+				if(data.Status===0){
+					if(!isChangetab){
+						this.draw(data.TargetX,0,data.TargetY+plus,0);
+					}
+					
+					if(data.Darts===0){
+						$('#ThongBao').modal('show');
+					}
+
+					if(data.Points===0){
+						$('#myModalchucmung').modal('show');
+						if(auto_play){
+							clearInterval(this.state.intervalId);
+						}
+						
+					}
+
+					setTimeout(()=>{
+						tieuconlai.text(awardsContent)
+					}, 5000);
+					setTimeout(()=>{
+						this.showScore(data.Score);
+						tieuconlai.text(`Số phi tiêu còn lại: ${data.Darts}`);
+						txt_points.text(data.Points)
+						var list_top=data.TopList;
+						for (let i = 0; i < list_top.length; i++) {
+							list_top_user[i].text(this.formatText(list_top[i]))
+						}
+						this.setState({countDart: data.Darts, points_sanqua: data.Points, listTop:data.TopList})
+					}, 400);
+					
+				}else if(data.Status===2){
+					this.setState({listTop:data.Data,isLoading:false, duatop:false, msg:'Phiên chơi đã kết thúc!'}, ()=>{
+						$('#Modalnone').modal('show');
+					})
+					
+				}else if(data.Status===3){
+					this.logoutAction();
+				}else if(data.Status===5){
+					this.setState({msg_err:'Có lỗi xảy ra!'}, ()=>{
+						$('#Error').modal('show');
+					})
+				}
+			})
 		}else{
 			$('#ThongBao').modal('show');
 		}
@@ -1164,12 +1238,12 @@ class Lucky_Rotation extends React.Component {
 		
 		var score=totalScore>9?totalScore:'0'+totalScore;
 		const {layer, stage}=this.state;
-		var newH=stage.height() / 2;
+		var newH=stage.height() / 2-60;
 		var size=25;
 	
 		var score_text = new Konva.Text({
-			x: stage.width() / 2 -15,
-			y: stage.height() / 2,
+			x: stage.width() / 2 +30,
+			y: stage.height() / 2 -60,
 			text: score,
 			fontSize: size,
 			fontFamily: 'Calibri',
@@ -1193,7 +1267,7 @@ class Lucky_Rotation extends React.Component {
 		setTimeout(()=>{ 
 			score_text.remove();
 			clearInterval(inter)
-		}, 1000);
+		}, 5000);
 
 		
 		this.setState({score_text:score_text})
@@ -1205,7 +1279,7 @@ class Lucky_Rotation extends React.Component {
 	
 		var text_warning = new Konva.Text({
 			x: stage.width() / 2 -100,
-			y: stage.height() / 2,
+			y: stage.height() / 2 -100,
 			text: "Vuốt lên để phi tiêu!",
 			fontSize: 25,
 			fontFamily: 'Calibri',
@@ -1230,49 +1304,96 @@ class Lucky_Rotation extends React.Component {
 
 	render() {
 
-		const {msg, user, image, horizontal, auto_play, timing, day, hour, minute, second, data, countDart, points_sanqua, listTop, isPlay}=this.state;
+		const {msg, vertical, auto_play, listTop, duatop, isLoading, msg_err}=this.state;
 
-		// if(!horizontal){
-		// 	return (
-		// 		<div>
-		// 			<img src={rotate} width="100%" alt="" />
-		// 		</div>
-		// 	)
-		// }
+		if(!vertical){
+			return (
+				<div style={{top:"45%"}}>
+					<p style={{textAlign:'center'}}>Xoay dọc để chơi nhé.</p>
+				</div>
+			)
+		}
 
 		return (
-				<div id="game" style={{backgroundColor:'black'}}>
+				<div id="game" style={{backgroundColor:'#000000'}}>
 						{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
-						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.88, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
-						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
+						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.85, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
+						<div id="div_exit" style={{position:'absolute', top:40, left:"72%", zIndex:999999}} onTouchStart={this.exit}></div>
 
+						{/* <!-- The Modal Thông báo--> */}
 						<div class="modal fade" id="Modalnone" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
-							<div class="modal-dialog modal-dangnhap">
-								<div class="modal-content bg-transparent border-0">
+						<div class="modal-dialog modal-dangnhap">
+							<div class="modal-content bg-transparent border-0">
 
-								<div class="modal-body border-0">
-									<h2 class="font-size-16 pt-5 font-weight-bold text-uppercase text-center">{msg}</h2>
-									<p class="text-center"> <a href="duatop"><img src={btn_duatop} width="120" alt="Active VIP" /></a></p>
-								</div>
-
-								</div>
+							<div class="modal-header border-0 p-0 text-dark">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
 							</div>
+
+							<div class="modal-body border-0">
+								{(duatop)?(<div class="modal-body border-0">
+										<h2 class="font-size-16 font-weight-bold text-uppercase text-center">{msg}</h2>
+										<p class="text-center pt-1"> <a href="duatop"><img src={btn_duatop} width="120" alt="Active VIP" /></a></p>
+									</div>):(<div class="modal-body border-0">
+										<h2 class="font-size-16 font-weight-bold text-uppercase text-center">{msg}</h2>
+										{(!isLoading)?(<h2 class="font-size-16 font-weight-bold text-uppercase text-center">Giải này đã thuộc về tài khoản <span class="text-shadow">{listTop[0].Username}</span></h2>):(<div></div>)}
+										
+										<p class="text-center"> <a href="/"><img src={btn_thoat} width="120" alt="Active VIP" /></a></p>
+									</div>)}
+							</div>
+
+							</div>
+						</div>
 						</div>
 
 											
 						{/* <!-- The Modal Thông báo--> */}
-						<div class="modal fade" id="ThongBao" style={{zIndex:9999999}}>
+						<div class="modal fade" id="ThongBao" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
 							<div class="modal-dialog modal-dangnhap">
 								<div class="modal-content bg-transparent border-0">
 
 								<div class="modal-body border-0">
-									<h2 class="font-size-16 pt-5 font-weight-bold text-uppercase text-center">Bạn đã hết tiêu</h2>
-									<p class="text-center"> <a href="duatop"><img src={btn_duatop} width="120" alt="Active VIP" /></a></p>
+									<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">Bạn đã hết Phi Tiêu.</h2>
+									<p class="font-size-14 font-weight-bold text-uppercase text-center" style={{marginBottom:10}}> Vui lòng nạp thêm Scoin để nhận Phi Tiêu và tiếp tục chơi.</p>
+									<p class="text-center"><a href="https://scoin.vn/" title="Nạp Scoin" target="_blank"><img src={btn_nap_scoin} width="30%" hspace="10" alt="" /></a><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
 								</div>
 
 								</div>
 							</div>
 						</div>
+
+						<div class="modal fade" id="Error" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
+							<div class="modal-dialog modal-dangnhap">
+								<div class="modal-content bg-transparent border-0">
+									<div class="modal-body border-0">
+										<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">{msg_err}</h2>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						{/* <!-- The Modal Thông báo chúc mừng--> */}
+						<div class="modal" id="myModalchucmung" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
+							<div class="modal-dialog">
+								<div class="modal-content bg-transparent border-0">
+
+								{/* <!-- Modal body --> */}
+								<div class="modal-body bg-chucmung_m justify-content-center">
+									<div class="card bg-transparent border-0">
+									<div class="card-body content-chucmung_m mx-auto">
+										<div class="text-chucmung_m text-center">
+											<span class="text-shadow font-weight-bold font-size-18_m">Bạn đã đoạt giải Săn Quà</span>
+										</div>
+										<p class="pt-2 mb-2 text-center text-shadow" style={{fontSize:14}}>(Phần thưởng đã được chuyển vào tủ đồ sự kiện) <br /></p>
+										<button type="button" class="btn btn-danger btn-sm btn-block text-center font-size-14_m" data-dismiss="modal" onClick={this.exit}>Xác nhận</button>
+									</div>
+									</div>
+									
+								</div>
+
+								</div>
+							</div>
+						</div>
+					
 						
 						
 				</div>
@@ -1284,6 +1405,7 @@ const mapStateToProps = state => ({
 	dataProfile: state.profile.data,
 	dataLuckyInfo: state.lucky.dataLuckyInfo,
 	dataLuckyItems:state.lucky.dataLuckyItems,
+	dataSesions: state.lucky.dataSesions,
 	dataInfoUser:state.lucky.dataInfoUser,
 	dataUserSpin:state.lucky.dataUserSpin,
 	dataItemAward:state.lucky.dataItemAward,
@@ -1301,20 +1423,16 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-	getDetailData,
-	getRotationDetailData,
-	getRotationDetailDataUser,
+	getMoreSessions,
 	pickCard,
 	getInfoUser,
-	buyTurn,
 	getItemAward,
 	getHistoryTuDo,
 	getTuDo,
-	getCodeBonus,
 	getLuckyInfo,
 	getLuckyItems,
 	userLogout,
-	getDartScore
+	gds
 }, dispatch)
 
 
