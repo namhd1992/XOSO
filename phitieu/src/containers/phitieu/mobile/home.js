@@ -223,7 +223,7 @@ class Lucky_Rotation extends React.Component {
 		// 	$('#Modalbanner').modal('show');
 		// }
 		// localStorage.setItem("update29", true);
-		$('#Modalbanner').modal('show');
+		// $('#Modalbanner').modal('show');
 		
 		this.getVinhDanh(1,1);
 
@@ -491,12 +491,8 @@ class Lucky_Rotation extends React.Component {
 	showModalTuDo=()=>{
 		var user = JSON.parse(localStorage.getItem("user"));
 		if (user !== null) {
-			if(user.VipLevel!==0){
-				this.getDataTuDo(user);
-				$('#Modaltudo').modal('show');
-			}else{
-				$('#activeVip').modal('show');
-			}
+			this.getDataTuDo(user);
+			$('#Modaltudo').modal('show');
 		}else {
 			$('#Modaldangnhap').modal('show');
 		}
@@ -888,10 +884,6 @@ class Lucky_Rotation extends React.Component {
 							</div>
 							<div class="text-center align-self-center pr-1">
 								<p class="font-size-16 text-white mb-0">{user.Username}</p>
-								{(user.VipLevel===1)?(<h2 class="font-size-14 text-warning m-0">VIP Đồng <img src={vip_dong} alt="VIP Đồng" width="16" /></h2>):(<div></div>)}
-								{(user.VipLevel===2)?(<h2 class="font-size-14 text-warning m-0">VIP Bạc <img src={vip_bac} alt="VIP Bạc" width="16" /></h2>):(<div></div>)}
-								{(user.VipLevel===3)?(<h2 class="font-size-14 text-warning m-0">VIP Vàng <img src={vip_vang} alt="VIP Vàng" width="16" /></h2>):(<div></div>)}
-								{(user.VipLevel===4)?(<h2 class="font-size-14 text-warning m-0">VIP Bạch kim <img src={vip_bachkim} alt="VIP Bạch kim" width="16" /></h2>):(<div></div>)}
 							</div>
 						</div>):(<div class="d-flex flex-row-reverse">
 							<div class="align-self-center">
@@ -904,16 +896,9 @@ class Lucky_Rotation extends React.Component {
 							<div class="bg-bottom_m">
 
 								{(isLogin)?(<div class="btn-s_m position-relative">
-									{(user.VipLevel>0)?(<div>
-										<a style={{cursor:'pointer'}} onClick={this.getListSanQua}><img src={btn_sanqua} width="30%" hspace="10" /></a>
-
-										<a href="/duatop" style={{cursor:'pointer'}}><img src={btn_duatop} width="30%" hspace="10" /></a>
-									</div>):(<div><a title="Săn quà" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_sanqua} width="30%" hspace="10" /></a>
-               							<a title="Đua TOP" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_duatop} width="30%" hspace="10" /></a></div>)}
-									
+									<a href="/duatop" style={{cursor:'pointer'}}><img src={btn_duatop} width="30%" hspace="10" /></a>
 								</div>):(
 								<div class="btn-s_m position-relative">
-									 	<a title="Săn quà" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_sanqua} width="30%" hspace="10" /></a>
                							<a title="Đua TOP" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_duatop} width="30%" hspace="10" /></a>
 								</div>
 								)}
@@ -922,10 +907,7 @@ class Lucky_Rotation extends React.Component {
 								<div class="bxh_m position-relative">
 									<ul class="nav nav-pills_m nav-justified" role="tablist">
 										<li class="nav-item">
-											<a class="nav-link_m btn-vinhdanh_m p-0" onClick={()=>this.getVinhDanh(1,1)}><img src={type===1?btn_vinhdanhsanqua_active:btn_vinhdanhsanqua} width="95%" hspace="5" id="image-1" /></a>
-										</li>
-										<li class="nav-item">
-											<a class="nav-link_m btn-bxhduatop_m p-0" onClick={()=>this.getVinhDanh(2,1)}><img src={type==2?btn_bxhduatop_active:btn_bxhduatop} width="95%" hspace="5" id="image-2" /></a>
+											<a class="nav-link_m btn-bxhduatop_m p-0" onClick={()=>this.getVinhDanh(2,1)}><img src={btn_bxhduatop_active} width="95%" hspace="5" id="image-2" /></a>
 										</li>
 									</ul>
 									
@@ -965,19 +947,19 @@ class Lucky_Rotation extends React.Component {
 										</div>             
 									</div>
 								</div>
-								<div class="btn-h_m position-relative">
+								{/* <div class="btn-h_m position-relative">
 									<a href="https://daily.scoin.vn/huong-dan-mua-the/" title="Hướng dẫn mua thẻ scoin" target="_blank"><img src={btn_huongdanmuathescoin} width="40%" hspace="10" /></a>
 									<a href="https://www.facebook.com/scoinvtcmobile" title="Nhận thông báo sự kiện" target="_blank"><img src={btn_nhanthongbaosukien} width="40%" hspace="10" /></a>
-								</div>
+								</div> */}
 								<div class="btn-h_m position-relative mt-2">
-									<a href="https://scoin.vn/nap-game" title="Nạp game" target="_blank"><img src={btn_napgame} width="20%" hspace="11%" /></a>
+									{/* <a href="https://scoin.vn/nap-game" title="Nạp game" target="_blank"><img src={btn_napgame} width="20%" hspace="11%" /></a> */}
 									<a href="Tel:19001104" title="Hot line"><img src={img_hotline} width="40%" hspace="10" /></a>
 								</div>
-								<div class="btn-h_m position-relative mt-2">
+								{/* <div class="btn-h_m position-relative mt-2">
 									<a href="https://scoin.vn/" title="Scoin" target="_blank"><img src={logo_scoin} width="20%" hspace="10" /></a>
 									<a href="https://vip.scoin.vn" title="Scoin VIP" target="_blank"><img src={logo_scoinvip} width="20%" hspace="10" /></a>
 									<a title="Splay"><img src={logo_splay} width="20%" hspace="10" /></a>
-								</div>
+								</div> */}
 								<div class="btn-h_m position-relative mt-2 pb-2 font-size-3vw_m text-white-50">
 									<p class="text-center">
 										Hệ thống phát hành game VTC Mobile
@@ -997,10 +979,10 @@ class Lucky_Rotation extends React.Component {
 								</div>):(<div></div>)}
 								
 								<div class="menu-left_m">
-									<a href="https://vip.scoin.vn" title="Active VIP" target="_blank"><p class="mb-0 menu-link_m link-first_m"></p></a>
+									{/* <a href="https://vip.scoin.vn" title="Active VIP" target="_blank"><p class="mb-0 menu-link_m link-first_m"></p></a> */}
 									<a title="Hướng dẫn chơi" onClick={this.showModalHuongDan} style={{cursor:'pointer'}}><p class="mb-0 menu-link_m"></p></a>
 									<a title="Giải thưởng" onClick={this.showModalGiaiThuong} style={{cursor:'pointer'}}><p class="mb-0 menu-link_m"></p></a>
-									<a title="Chuyển phi tiêu" onClick={this.showModalChuyenTieu}><p class="mb-0 menu-link_m"></p></a>
+									{/* <a title="Chuyển phi tiêu" onClick={this.showModalChuyenTieu}><p class="mb-0 menu-link_m"></p></a> */}
 								</div>
 								<div class="menu-right_m popover-visible-trigger" data-toggle="popover" data-placement="top" data-content={content} data-html="true"><a title="Tủ đồ" data-toggle="modal" onClick={this.showModalTuDo}><img src={btn_tudo} width="100%" alt="" /></a></div>
 								
@@ -1207,16 +1189,7 @@ class Lucky_Rotation extends React.Component {
 								<a class="nav-link p-1" onClick={this.tab1}><img id="image-5" src={tab_1 ? tab_cachthucthamgia_active : tab_cachthucthamgia} width="130"  alt="" /></a>
 							</li>
 							<li class="nav-item">
-								<a class="nav-link p-1" onClick={this.tab2}><img id="image-6" src={tab_2 ? tab_hdsanqua_active : tab_hdsanqua} width="130" alt="" /></a>
-							</li>
-							<li class="nav-item">
 								<a class="nav-link p-1" onClick={this.tab3}><img id="image-7" src={tab_3 ? tab_hdduatop_active : tab_hdduatop} width="130" alt="" /></a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link p-1" onClick={this.tab4}><img id="image-8" src={tab_4 ? tab_hdsdgiaithuong_active : tab_hdsdgiaithuong} width="130" alt="" /></a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link p-1" onClick={this.tab5}><img id="image-8" src={tab_5 ? tab_appfb_active : tab_appfb} width="130" alt="" /></a>
 							</li>
 						</ul>
 							
@@ -1233,94 +1206,41 @@ class Lucky_Rotation extends React.Component {
 									<dd> &bull; Trong thời gian diễn ra sự kiện, với mỗi lần nạp ingame/nạp ví scoin bằng thẻ scoin và chuyển khoản ngân hàng thành công, tài khoản sẽ nhận được phi tiêu để tham gia game, số phi tiêu được quy định như sau: </dd>
 									<dd> 
 										<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
-											<thead>
-											<tr>
-												<th class="p-1">Số tiền nạp thẻ Scoin</th>
-												<th class="p-1">Số phi tiêu nhận</th>
-						
-											</tr>
-											</thead>
-											<tbody>
-											<tr>
-												<td class="p-1">10k</td>
-												<td class="p-1">1</td>
-											</tr>
-											<tr>
-												<td class="p-1">20k</td>
-												<td class="p-1">2</td>
-											</tr>
-											<tr>
-												<td class="p-1">50k</td>
-												<td class="p-1">5</td>
-											</tr>
-											<tr>
-												<td class="p-1">100k</td>
-												<td class="p-1">10</td>
-											</tr>
-											<tr>
-												<td class="p-1">200k</td>
-												<td class="p-1">20</td>
-											</tr>
-											<tr>
-												<td class="p-1">300k</td>
-												<td class="p-1">30</td>
-											</tr>
-											<tr>
-												<td class="p-1">500k</td>
-												<td class="p-1">50</td>
-											</tr>
-											<tr>
-												<td class="p-1">1000k</td>
-												<td class="p-1">100</td>
-											</tr>
-											<tr>
-												<td class="p-1">2000k</td>
-												<td class="p-1">200</td>
-											</tr>
-											<tr>
-												<td class="p-1">5000k</td>
-												<td class="p-1">500</td>
-											</tr>
-											</tbody>
-										</table>
-										<table class="table table-bordered table-hover mx-auto" style={{width: "90%"}}>
-											<thead>
-											<tr>
-												<th class="p-1">Số tiền nạp chuyển khoản ngân hàng </th>
-												<th class="p-1">Số phi tiêu nhận</th>
-						
-											</tr>
-											</thead>
-											<tbody>
-											<tr>
-												<td class="p-1">&lt; 10k</td>
-												<td class="p-1">0</td>
-											</tr>
-											<tr>
-												<td class="p-1">10k &lt; nạp &lt; 50k</td>
-												<td class="p-1">3</td>
-											</tr>
-											<tr>
-												<td class="p-1">50k &lt; nạp &lt; 100k</td>
-												<td class="p-1">8</td>
-											</tr>
-											<tr>
-												<td class="p-1">100k &lt; nạp &lt; 500k</td>
-												<td class="p-1">35</td>
-											</tr>
-											<tr>
-												<td class="p-1">500k &lt; nạp &lt; 1000k</td>
-												<td class="p-1">60</td>
-											</tr>
-											<tr>
-												<td class="p-1">1000k &lt; nạp &lt; 2000k</td>
-												<td class="p-1">120</td>
-											</tr>
-											<tr>
-												<td class="p-1">2000k &lt; nạp &lt; 5000k</td>
-												<td class="p-1">250</td>
-											</tr>                      
-											</tbody>
+										<thead>
+										<tr>
+											<th class="p-1">Nhiệm vụ</th>
+											<th class="p-1">Số phi tiêu nhận</th>
+											<th class="p-1">Số lượt phóng</th>
+										</tr>
+										</thead>
+										<tbody>
+										<tr>
+											<td class="p-1">Điểm danh</td>
+											<td class="p-1">5</td>
+											<td class="p-1">5</td>
+										</tr>
+										<tr>
+											<td class="p-1">Khách hàng mới</td>
+											<td class="p-1">10</td>
+											<td class="p-1">10</td>
+										</tr>
+										<tr>
+											<td class="p-1">Khách hàng mua gói cước ngày</td>
+											<td class="p-1">20</td>
+											<td class="p-1">20</td>
+										</tr>
+										<tr>
+											<td class="p-1">Khách hàng mua gói cước tháng</td>
+											<td class="p-1">50</td>
+											<td class="p-1">40</td>
+										</tr>
+										<tr>
+											<td class="p-1">Khách hàng mua gói cước năm</td>
+											<td class="p-1">100</td>
+											<td class="p-1">100</td>
+										</tr>
+										
+										</tbody>
 										</table>
 									</dd>            
 									<dd> - Sau khi nhận được Phi tiêu, khách hàng chọn chế độ <strong>SĂN QUÀ</strong> hoặc <strong>ĐUA TOP</strong> để chơi.</dd>
@@ -1337,24 +1257,7 @@ class Lucky_Rotation extends React.Component {
 								</dl>          
 							</div>
 							{/* <!-- End Tab hd1 -->
-							<!-- Begin Tab hd2 --> */}
-							<div class={tab_2 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd2">
-								<h4 class="font-size-3vw_m font-weight-bold">2. Săn quà</h4>
-								<dl class="font-size-3vw_m">
-									<dd>- Mỗi ngày sẽ có nhiều Phiên <strong>SĂN QUÀ</strong> được diễn ra, người chơi click Tab <strong>GIẢI THƯỞNG</strong> để xem thời gian diễn ra phiên tiếp theo và giải thưởng của phiên đó.</dd>
-									<dd> <img src={tab_giaithuong} class="img-fluid d-block mx-auto" alt="" /></dd>                 
-									<dd>- Trong thời gian diễn ra Phiên săn quà, người chơi chọn Chế độ <strong>SĂN QUÀ</strong> tại Trang chủ để tham gia:</dd>
-									<dd> <img src={che_do_sanqua} width="350" class="img-fluid d-block mx-auto" alt="" /></dd>  
-									<dd>- Tại mỗi Phiên Săn quà, số điểm mặc định ban đầu của mỗi người chơi được quy định cụ thể (Ví dụ: 501/5010/…)</dd>
-               						<dd>- Người chơi sử dụng số Phi tiêu mình có để ném vào bảng, điểm nhận được sau mỗi lần ném sẽ được TRỪ dần vào tổng điểm ban đầu.</dd>
-									<dd>- Trong thời gian quy định, người chơi nào đưa được tổng điểm <strong>VỀ 0 SỚM NHẤT</strong> sẽ là người <strong>THẮNG</strong> cuộc và nhận được giải thưởng của phiên Săn quà, đồng thời phiên chơi đó kết thúc.</dd>
-									<dd>- Trường hợp không có người chơi nào đưa được điểm về 0, giải thưởng sẽ được bảo lưu và cộng dồn vào Phiên chơi tiếp theo.</dd>
-									{/* <dd>- Trường hợp có nhiều tài khoản cùng đưa được điểm về 0 (hoặc cùng có số điểm ít nhất bằng nhau), người thắng cuộc là người đưa được điểm về 0 (hoặc điểm về số thấp nhất) trong thời gian sớm nhất.</dd> */}
-									<dd><em>- Lưu ý: Trường hợp phát sinh tranh chấp, khiếu nại liên quan đến chương trình, Công ty VTC Mobile sẽ trực tiếp giải quyết và quyết định của VTC Mobile là kết quả cuối cùng. Mọi trường hợp gian lận hoặc không trung thực sẽ bị xử lý theo pháp luật.</em></dd>
-									<dd><em>- Đối với khách hàng chơi trên điện thoại Iphone: để trải nghiệm game được tốt nhất, hãy tắt các trang đang mở trên trình duyệt safari/chrome trước khi chơi.</em></dd>           
-								</dl>	
-							</div>
-							{/* <!-- End Tab hd2 -->
+							
 							<!-- Begin Tab hd3 --> */}
 							<div class={tab_3 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd3">
 								<h4 class="font-size-3vw_m font-weight-bold">3. Đua TOP</h4>
@@ -1369,71 +1272,7 @@ class Lucky_Rotation extends React.Component {
 									<dd><em>- Đối với khách hàng chơi trên điện thoại Iphone: để trải nghiệm game được tốt nhất, hãy tắt các trang đang mở trên trình duyệt safari/chrome trước khi chơi.</em></dd>   
 								</dl>
 							</div>
-							{/* <!-- End Tab hd3 -->
-							<!-- Begin Tab hd4 --> */}
-							<div class={tab_4 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd4">
-								<h4 class="font-size-3vw_m font-weight-bold">4. Hướng dẫn sử dụng giải thưởng</h4>
-								<dl class="font-size-3vw_m">
-									<dt>- Voucher Scoin:</dt>
-									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ Scoin voucher</strong> và click <span class="text-primary">Mở</span>.</dd>
-									<dd> <img src={voucher_scoin} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Copy <strong>MÃ CODE</strong> và số <strong>SERIAL</strong>: </dd>
-									<dd> <img src={scoin_voucher_10k} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn NẠP GAME =&gt; Điền Tên tài khoản và server =&gt; Chọn phương thức nạp Thẻ cào =&gt; Chọn loại thẻ Scoin =&gt; Điền MÃ CODE và số SERIAL đã copy ở trên.</dd>
-									<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
-									<dd class="font-italic mark">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
-									<dt>- Voucher chuyển khoản ngân hàng:</dt>
-									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Thẻ voucher chuyển khoản ngân hàng</strong> và click <span class="text-primary">Mở</span>.</dd>
-									<dd> <img src={voucher_scoin_banktranfer} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Ấn <strong>“Nạp ngay”</strong></dd>
-									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Phương thức nạp Ngân hàng</dd>
-									<dd> <img src={nap_ngan_hang} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Copy <strong>Nội dung chuyển khoản</strong> và paste vào mục <strong>Nội dung</strong> khi bạn thực hiện chuyển khoản vào tài khoản VTC Mobile, số tiền trong voucher sẽ được cộng trực tiếp vào Ví sau khi bạn chuyển khoản thành công.</dd>
-									<dd> <img src={ck_ngan_hang} class="img-fluid" alt="" /></dd>
-									<dd class="font-italic mark">* Lưu ý: Giải thưởng thẻ voucher có hiệu lực trong vòng 1 tháng kể từ thời điểm kết thúc sự kiện. Hết thời gian kể trên, giải thưởng không còn giá trị.</dd>
-									<dt>- Topup 50k:</dt>
-									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn giải thưởng <strong>Topup Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
-									<dd> <img src={topup_scoin} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Scoin được tự động cộng vào Ví Scoin của tài khoản </dd>
-									<dt>- Thẻ Scoin:</dt>
-									<dd> &bull; Khách hàng truy cập <strong>Tủ đồ</strong>, chọn <strong>Phần thưởng</strong>, chọn <strong>giải thưởng Thẻ Scoin</strong> và click <span class="text-primary">Mở</span>.</dd>
-									<dd> <img src={the_scoin} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Copy <strong>MÃ CODE</strong> và <strong>SERIAL</strong>: </dd>
-									<dd> <img src={scoin_10k} class="img-fluid" alt="" /></dd>
-									<dd> &bull; Truy cập <a href="https://scoin.vn/" title="Scoin.vn" target="_blank">https://scoin.vn/</a> , chọn Nạp game/Điền Tên tài khoản và server/ Chọn phương thức nạp Thẻ cào/ Chọn loại thẻ Scoin và điền mã Thẻ và số serial đã copy ở trên.</dd>
-									<dd> <img src={nap_voucher_scoin} class="img-fluid" alt="" /></dd>
-						
-								</dl> 
-							</div>
-							{/* <!-- Begin Tab hd5 --> */}
-							<div class={tab_5 ? "tab-pane container mt-3 active" : "tab-pane container mt-3 fade"} id="hd5">
-								<h4 class="font-size-3vw_m font-weight-bold">5. Hướng dẫn mở link game Phi tiêu từ Facebook của điện thoại</h4>
-								<dl class="font-size-3vw_m">
-									<dd>- Để trải nghiệm game được tốt nhất, Khách hàng lưu ý sử dụng trình duyệt <strong>SAFARI</strong> (đối với điện thoại Iphone) hoặc <strong>CHROME</strong> (đối với điện thoại Android) để mở link game <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> </dd>
-									<dd> Với những khách hàng mở link <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ Facebook của điện thoại, hãy thực hiện theo hướng dẫn dưới đây.</dd>
-									<dt>1.	Đối với điện thoại Iphone: </dt>
-									<dd><strong>Bước 1</strong>: Ấn vào đường link <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ bài viết tại fanpage Scoin (hoặc bài viết bất kỳ trên Facebook)</dd>
-									<dd> <img src={fb_i1} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 2:</strong> Ấn vào dấu ba chấm tại góc phải</dd>
-									<dd> <img src={fb_i2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 3</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN SAFARI</strong> , link game sẽ được mở bằng trình duyệt SAFARI của Iphone</dd>
-									<dd> <img src={fb_i3_i4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 4</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
-									<dd> <img src={fb_i5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dt>2. Đối với điện thoại Android: </dt>
-									<dd><strong>Bước 1:</strong> Ấn vào đường link  <a href="https://phitieu.splay.vn/" title="">https://phitieu.splay.vn/</a> từ bài viết tại fanpage Scoin (hoặc bài viết bất kỳ trên Facebook)</dd>
-									<dd> <img src={fb_a1}  width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 2</strong>: Ấn vào dấu ba chấm tại góc phải</dd>
-									<dd> <img src={fb_a2} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 3</strong>: Chọn <strong>MỞ TRONG TRÌNH DUYỆT</strong> hoặc <strong>OPEN IN BROWSER</strong>, link game sẽ được mở bằng trình duyệt mặc định của điện thoại</dd>
-									<dd> <img src={fb_a3_a4} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									<dd><strong>Bước 4</strong>: Mở khóa tự động xoay màn hình và trải nghiệm game</dd>
-									<dd> <img src={fb_a5} width="250" class="img-fluid d-block mx-auto" alt="" /></dd>
-									
-								</dl> 
-							</div>
-							{/* <!-- End Tab hd4 --> */}
-							</div> 
+						</div> 
 						
 					</div>
 					{/* <!--End Modal body --> */}
