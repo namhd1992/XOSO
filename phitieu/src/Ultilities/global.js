@@ -54,9 +54,9 @@ class Ultilities {
 
 	static base_url = () => {
 		//live
-			return "https://api.splay.vn/";
+			// return "https://api.splay.vn/";
 		//dev
-			// return "http://10.0.8.18:8086/";
+			return "http://10.0.3.15/";
 
 			
 	}

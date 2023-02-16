@@ -528,6 +528,31 @@ export const getVinhDanh = (limit, offset, type) => {
 	}
 }
 
+export const getDuatopVtvCard = (limit, offset, type) => {
+	var header = {
+		headers: {
+			"Content-Type": "application/json",
+			// "token": token,
+		}
+	}
+	return dispatch => {
+		dispatch({
+			type: LUCKY_REQUEST
+		})
+		var url = Ultilities.base_url() + "darts/award-table-vtvcab/?type="+type+"&limit=" + limit + "&offset=" + offset;
+		return axios.get(url, header).then(function (response) {
+			dispatch({
+				type: LUCKY_VINH_DANH,
+				data: response.data
+			})
+		}).catch(function (error) {
+			dispatch({
+				type: SERVER_ERROR
+			})
+		})
+	}
+}
+
 export const getTuDo = (token, limit, offset) => {
 	var header = {
 		headers: {

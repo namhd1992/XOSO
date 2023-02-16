@@ -22,7 +22,8 @@ import {
 	getDonate,
 	getInfoDonate,
 	checkRollup,
-	getListSanQua
+	getListSanQua,
+	getDuatopVtvCard
 } from '../../../modules/lucky'
 import {
 	getData
@@ -223,15 +224,12 @@ class Lucky_Rotation extends React.Component {
 		// localStorage.setItem("update29", true);
 		
 
-		this.getVinhDanh(1,1);
+		this.getDuatopVtvCard(1,1);
 		$('.popover-visible-trigger').popover('show').off('click'); 
 
 
-		if (user !== null) {
-			this.setState({isLogin:true, user:user})
-		} 
-
-		if (user !== null) {
+		this.setState({user:user})
+		if(user!==null){
 			this.props.checkRollup(user.Token).then(()=>{
 				var data=this.props.dataCheckRollup;
 				if(data!==undefined){
@@ -242,8 +240,6 @@ class Lucky_Rotation extends React.Component {
 					}
 				}
 			})
-		}else {
-			this.setState({showRollup: true})
 		}
 		
 		window.addEventListener('scroll', this.handleScroll);
@@ -257,9 +253,11 @@ class Lucky_Rotation extends React.Component {
 			}, 3000);
 		}
 	}
+
 	componentWillUnmount() {
 		clearInterval(this.state.intervalId);
 	}
+
 	setScreenOrientation=()=>{
 		const {innerWidth}=this.state;
 		if(Math.abs(innerWidth - window.innerWidth) >100){
@@ -290,79 +288,12 @@ class Lucky_Rotation extends React.Component {
 		})
 	}
 
-	showModalChuyenTieu=()=>{
-		var user = JSON.parse(localStorage.getItem("user"));
-		document.getElementById("code").value="";
-		document.getElementById("username").value="";
-		document.getElementById("numberDart").value="";
-		if (user !== null) {
-			this.props.getInfoDonate(user.Token).then(()=>{
-				var data=this.props.dataInfoDonate;
-				if(data!==undefined){
-					if(data.Status===0){
-						this.setState({dataInfoDonate:data.Data}, ()=>{
-							$('#Modalchuyenphitieu').modal('show');
-						})
-					}
-				}
-			})
-		}else {
-			$('#Modaldangnhap').modal('show');
-		}
-	}
 
-	onResize=()=>{
-		if (window.innerWidth <= 320) {
-			this.setState({ width: 210, height: 235, img_width:170, img_height:170});
-		}
-		if (window.innerWidth > 320 && window.innerWidth <= 360) {
-			this.setState({ width: 252, height: 282, img_width:200, img_height:200});
-		}
-		if (window.innerWidth > 360 && window.innerWidth <= 380) {
-			this.setState({ width: 293, height: 330, img_width:235, img_height:235});
-		}
-		if (window.innerWidth > 380 && window.innerWidth <= 480) {
-			this.setState({ width: 344, height: 383, img_width:275, img_height:275});
-		}
-		if (window.innerWidth > 480 && window.innerWidth <= 600) {
-			this.setState({ width: 335, height: 375, img_width:267, img_height:267});
-		}
-		if (window.innerWidth > 600 && window.innerWidth <= 640) {
-			this.setState({ width: 336, height: 376, img_width:270, img_height:270});
-		}
-		if (window.innerWidth > 640 && window.innerWidth <= 768) {
-			this.setState({ width: 470, height: 525, img_width:375, img_height:375});
-		}
-		if (window.innerWidth > 768 && window.innerWidth < 780) {
-			this.setState({ width: 504, height: 563, img_width:405, img_height:405});
-		}
-
-		if (window.innerWidth >= 780 && window.innerWidth <= 790) {
-			this.setState({ width: 469, height: 524, img_width:375, img_height:375});
-		}
-
-		if (window.innerWidth > 790 && window.innerWidth <= 800) {
-			this.setState({ width: 469, height: 522, img_width:372, img_height:372});
-		}
-
-		if (window.innerWidth > 800 && window.innerWidth <= 900) {
-			this.setState({ width: 504, height: 563, img_width:405, img_height:405});
-		}
-
-		if (window.innerWidth > 900 && window.innerWidth < 1024) {
-			this.setState({ width: 590, height: 653, img_width:470, img_height:470});
-		}
-
-		if (window.innerWidth >= 1024) {
-			this.setState({ width: 586, height: 657, img_width:470, img_height:470});
-		}
-	}
-
-	getVinhDanh=(type, pageNumber)=>{
+	getDuatopVtvCard=(type, pageNumber)=>{
 		const {limit}=this.state;
 		var offsetVinhDanh=(pageNumber-1)*limit;
 		this.setState({type:type, listVinhDanh:[], countVinhDanh:0}, ()=>{
-			this.props.getVinhDanh(limit, offsetVinhDanh, type).then(()=>{
+			this.props.getDuatopVtvCard(limit, offsetVinhDanh, type).then(()=>{
 				var data=this.props.dataVinhDanh;
 				if(data!==undefined){
 					if(data.Status===0){
@@ -473,48 +404,12 @@ class Lucky_Rotation extends React.Component {
 		$('#myModal1').modal('hide');
 	}
 
-	showModalTuDo=()=>{
-		var user = JSON.parse(localStorage.getItem("user"));
-		if (user !== null) {
-			this.getDataTuDo(user);
-			$('#Modaltudo').modal('show');
-		}else {
-			$('#Modaldangnhap').modal('show');
-		}
-	}
-
 
 
 	showModalHuongDan=()=>{
 		$('#Modalhuongdan').modal('show');
 	}
 
-	getDataTuDo=(user)=>{
-		const {limit, activeTuDo}=this.state;
-		var offsetTuDo=(activeTuDo-1)*limit;
-		// $('#Loading').modal('show');
-		this.setState({tab_tudo: true})
-		this.props.getTuDo(user.Token, limit, offsetTuDo).then(()=>{
-			// $('#Loading').modal('hide');
-			var data=this.props.dataTuDo;
-			if(data!==undefined){
-				if(data.Status===0){
-					this.setState({listTuDo:data.Data, countTuDo:data.Totals, noti_tudo:false})
-				}else if(data.Status===3){
-					this.logoutAction();
-				}else{
-				
-					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'}, ()=>{
-						$('#myModal11').modal('show');
-					})
-				}
-			}else{
-				$('#myModal12').modal('show');
-				this.setState({server_err:true})
-			}
-			
-		});
-	}
 
 	getHistory=(user)=>{
 		const {limit, activeHistory}=this.state;
@@ -540,41 +435,6 @@ class Lucky_Rotation extends React.Component {
 		});
 	}
 
-	getItem=(user, item)=>{
-		this.props.getItemAward(user.Token, item.AwardId).then(()=>{
-			// $('#Loading').modal('hide');
-			var data=this.props.dataItemAward;
-			if(data!==undefined){
-				if(data.Status===0){
-					this.getDataTuDo(user)
-					// this.setState({listHistory:data.Data, countHistory:data.Totals})
-					if(data.Data.Type ==='BankTransferVoucher'){
-						this.setState({dataItem:data.Data},()=>{
-							$("#Modalmoquavoucher").modal('show');
-						})
-					}else{
-						this.setState({dataItem:data.Data},()=>{
-							$("#Modalmoqua").modal('show');
-						})
-					}
-					
-				}else if(data.Status===1){
-					$('#myModal11').modal('show');
-					this.setState({message_error:data.Message})
-				}else if(data.Status===3){
-					this.logoutAction();
-				}else{
-					$('#myModal11').modal('show');
-					this.setState({message_error:'Chưa tải được dữ liệu. Vui lòng thử lại'})
-				}
-			}else{
-				$('#myModal12').modal('show');
-				this.setState({server_err:true})
-			}
-		});
-	}
-
-
 	closePopupAuto=()=>{
 		clearInterval(this.state.intervalId);
 		this.setState({ isSpin:false, closeAuto:false});
@@ -593,14 +453,6 @@ class Lucky_Rotation extends React.Component {
 	}
 
 
-
-	handlePageChangeTuDo=(pageNumber)=> {
-		var user = JSON.parse(localStorage.getItem("user"));
-		this.setState({activeTuDo: pageNumber},()=>{
-			this.getDataTuDo(user)
-		})
-	}
-
 	handlePageChangeHistory=(pageNumber)=> {
 		var user = JSON.parse(localStorage.getItem("user"));
 		this.setState({activeHistory: pageNumber},()=>{
@@ -611,7 +463,7 @@ class Lucky_Rotation extends React.Component {
 
 	handlePageChangeVinhDanh=(type, pageNumber)=> {
 		this.setState({activeVinhDanh: pageNumber},()=>{
-			this.getVinhDanh(type, pageNumber)
+			this.getDuatopVtvCard(type, pageNumber)
 		})
 
 	}
@@ -643,9 +495,7 @@ class Lucky_Rotation extends React.Component {
 
 	dangNhap=()=>{
 		var user = JSON.parse(localStorage.getItem("user"));
-		if (user !== null) {
-			$('#activeVip').modal('show');
-		}else {
+		if (user === null) {
 			$('#Modaldangnhap').modal('show');
 		}
 	}
@@ -749,96 +599,28 @@ class Lucky_Rotation extends React.Component {
 		this.setState({tab_1:true, tab_2:false})
 	}
 
-	// tab2=()=>{
-	// 	this.setState({tab_1:false, tab_2:true, tab_3:false, tab_4:false, tab_5:false})
-	// }
-
 	tab2=()=>{
 		this.setState({tab_1:false, tab_2:true})
 	}
 
-	// tab4=()=>{
-	// 	this.setState({tab_1:false, tab_2:false, tab_3:false, tab_4:true, tab_5:false})
-	// }
-
-	// tab5=()=>{
-	// 	this.setState({tab_1:false, tab_2:false, tab_3:false, tab_4:false, tab_5:true})
-	// }
-
 	rollup=()=>{
 		var user = JSON.parse(localStorage.getItem("user"));
-		if (user !== null) {
-			this.props.getRollup(user.Token).then(()=>{
-				var data=this.props.dataRollup;
-				if(data!==undefined){
-					if(data.Status===0){
-						this.setState({rollup:true, message_rollup: data.Message, type_action:'Điểm danh', showRollup:false}, ()=>{
-							$('#Modalddthanhcong').modal('show');
-						})
-					}else if(data.Status===1){
-						this.setState({rollup:false, message_rollup: data.Message}, ()=>{
-							$('#Modalddthanhcong').modal('show');
-						})
-					}
+		this.props.getRollup(user.Token).then(()=>{
+			var data=this.props.dataRollup;
+			if(data!==undefined){
+				if(data.Status===0){
+					this.setState({rollup:true, message_rollup: data.Message, type_action:'Điểm danh', showRollup:false}, ()=>{
+						$('#Modalddthanhcong').modal('show');
+					})
+				}else if(data.Status===1){
+					this.setState({rollup:false, message_rollup: data.Message}, ()=>{
+						$('#Modalddthanhcong').modal('show');
+					})
 				}
-			})
-		}else {
-			$('#Modaldangnhap').modal('show');
-		}
-
+			}
+		})
 	}
 
-	comfirmDonate=()=>{
-		var code=document.getElementById('code').value;
-		var username=document.getElementById('username').value;
-		var numberDart=document.getElementById('numberDart').value;
-
-		var user = JSON.parse(localStorage.getItem("user"));
-		if (user !== null) {
-			this.props.getDonate(user.Token, username, numberDart, code).then(()=>{
-				var data=this.props.dataDonate;
-				console.log(data)
-				if(data!==undefined){
-					if(data.Status===0){
-						this.setState({rollup:true, message_rollup: data.Message, type_action:'Chuyển tiêu'}, ()=>{
-							$('#Modalchuyenphitieu').modal('hide');
-							$('#Modalddthanhcong').modal('show');
-						})
-					}else{
-						this.setState({rollup:false, message_rollup: data.Message}, ()=>{
-							$('#Modalchuyenphitieu').modal('hide');
-							$('#Modalddthanhcong').modal('show');
-						})
-					}
-				}
-			})
-		}else {
-			$('#Modaldangnhap').modal('show');
-		}
-	}
-
-
-	getListSanQua=()=>{
-		var user = JSON.parse(localStorage.getItem("user"));
-		if (user !== null) {
-			this.props.getListSanQua(user.Token).then(()=>{
-				var data=this.props.dataSanqua;
-				if(data!==undefined){
-					if(data.Status===0){
-						this.setState({listSanqua:data.Data}, ()=>{
-							$('#Modalchonroom').modal('show');
-						})
-					}else{
-						this.setState({message_sanqua_empty:data.Message}, ()=>{
-							$('#ModalListEmpty').modal('show');
-						})
-					}
-				}
-			})
-		}else {
-			$('#Modaldangnhap').modal('show');
-		}
-	}
 
 	showGiaithuong=(data)=>{
 		var n=data.length;
@@ -854,18 +636,13 @@ class Lucky_Rotation extends React.Component {
 		return items;
 	}
 
-	playSanqua=(obj)=>{
-		localStorage.setItem("obj", JSON.stringify(obj));
-		window.location.replace('/sanqua')
-	}
-
 	render() {
 		const {message_sanqua_empty, listSanqua, showRollup,type_action, dataInfoDonate, rollup, message_rollup, content, warning_tudo,tab_1, tab_2, tab_tudo ,type,numberPage, isLogin,message_error,dataItem,listSesstions,
 			waiting, activeTuDo, activeHistory, activeVinhDanh, limit, countTuDo, countHistory, countVinhDanh, listHistory, listTuDo, listVinhDanh, user}=this.state;
 		return (<div>	
 					<div class="container-fluid page position-relative">
 						{/* <div id="tooltip" style={{width:400, height:40}}></div> */}
-						{(isLogin)?(<div class="login d-flex flex-row-reverse">
+						{/* {(isLogin)?(<div class="login d-flex flex-row-reverse">
 							<div class="align-self-center">
 								<a title="Đăng nhập" onClick={this.logoutAction} style={{cursor:'pointer'}}><img src={btn_dangxuat} alt="" width="100" /></a>
 							</div>
@@ -876,20 +653,15 @@ class Lucky_Rotation extends React.Component {
 							<div class="align-self-center">
 								<a title="Đăng nhập" onClick={this.loginAction} style={{cursor:'pointer'}}><img src={btn_dangnhap} alt="" width="100" /></a>
 							</div>
-						</div>)}
+						</div>)} */}
 						
 						<div class="bg-top position-relative">
 							<div class="bg-bottom">
-								{(isLogin)?(<div class="btn-s position-relative">
+								<div class="btn-s position-relative">
 									<Link to="/duatop">
 										<a style={{cursor:'pointer'}}><img src={btn_duatop} width="200px" hspace="10" /></a>
 									</Link>
-								</div>):(
-								<div class="btn-s position-relative">
-									 	{/* <a title="Săn quà" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_sanqua} width="200" hspace="10" /></a> */}
-               							<a title="Đua TOP" style={{cursor:'pointer'}} onClick={this.dangNhap}><img src={btn_duatop} width="200" hspace="10" /></a>
 								</div>
-								)}
 								
 								<div class="bxh position-relative mx-auto">
 									<ul class="nav nav-pills nav-justified" role="tablist">
@@ -897,7 +669,7 @@ class Lucky_Rotation extends React.Component {
 											<a class="nav-link btn-vinhdanh p-0" onClick={()=>this.getVinhDanh(1,1)}><img src={type===1?btn_vinhdanhsanqua_active:btn_vinhdanhsanqua} width="340" hspace="5" id="image-1" /></a>
 										</li> */}
 										<li class="nav-item">
-											<a class="nav-link btn-bxhduatop p-0" onClick={()=>this.getVinhDanh(2,1)}><img src={btn_bxhduatop_active} width="340" hspace="5" id="image-2" /></a>
+											<a class="nav-link btn-bxhduatop p-0"><img src={btn_bxhduatop_active} width="340" hspace="5" id="image-2" /></a>
 										</li>
 									</ul>
 									
@@ -907,8 +679,8 @@ class Lucky_Rotation extends React.Component {
 												<thead>
 													<tr class="bg-border-bottom">
 														<th class="p-1 bg-border-right w-33">Tài khoản</th>
-														<th class="p-1 bg-border-right w-33">Giải thưởng</th>
-														<th class="p-1 w-33">Thời gian trúng</th>
+														<th class="p-1 bg-border-right w-33">Tổng điểm</th>
+														<th class="p-1 w-33">Số lượt phóng</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -916,8 +688,8 @@ class Lucky_Rotation extends React.Component {
 													{listVinhDanh.map((obj, key) => (
 														<tr key={key} class="bg-border-bottom">
 															<td className="p-0 bg-border-right w-33">{obj.Username}</td>
-															<td class="p-0 bg-border-right w-33" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardName}>{obj.AwardName}</span></td>
-															<td className="p-0 w-33 w-33">{this.timeConverter(obj.RewardTime)}</td>
+															<td class="p-0 bg-border-right w-33" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.TotalPoints}>{obj.TotalPoints}</span></td>
+															<td className="p-0 w-33 w-33">{obj.Throws}</td>
 														</tr>
 													))}
 												</tbody>
@@ -938,19 +710,10 @@ class Lucky_Rotation extends React.Component {
 										</div>        
 									</div>
 								</div>
-								{/* <div class="btn-h position-relative">
-									<a href="https://daily.scoin.vn/huong-dan-mua-the/" title="Hướng dẫn mua thẻ scoin" target="_blank"><img src={btn_huongdanmuathescoin} width="340" hspace="10" /></a>
-									<a href="https://www.facebook.com/scoinvtcmobile" title="Nhận thông báo sự kiện" target="_blank"><img src={btn_nhanthongbaosukien} width="340" hspace="10" /></a>
-								</div> */}
+
 								<div class="btn-h position-relative mt-2">
-									{/* <a href="https://scoin.vn/nap-game" title="Nạp game" target="_blank"><img src={btn_napgame} width="150" hspace="100" /></a> */}
 									<a href="Tel:19001104" title="Hot line"><img src={img_hotline} width="300" hspace="40" /></a>
 								</div>
-								{/* <div class="btn-h position-relative mt-2">
-									<a href="https://scoin.vn/" title="Scoin" target="_blank"><img src={logo_scoin} width="150" hspace="30" /></a>
-									<a href="https://vip.scoin.vn/" title="Scoin VIP" target="_blank"><img src={logo_scoinvip} width="150" hspace="30" /></a>
-									<a title="Splay"><img src={logo_splay} width="150" hspace="30" /></a>
-								</div> */}
 								<div class="btn-h position-relative mt-2 pb-2 font-size-16 text-white-50">
 									<p class="text-center">
 										Hệ thống phát hành game VTC Mobile
@@ -970,13 +733,9 @@ class Lucky_Rotation extends React.Component {
 								</div>):(<div></div>)}
 								
 								<div class="menu-left">
-									{/* <a href="https://vip.scoin.vn/" title="Active VIP" target="_blank"><p class="mb-0 menu-link link-first"></p></a> */}
 									<a title="Hướng dẫn chơi" onClick={this.showModalHuongDan} style={{cursor:'pointer'}}><p class="mb-0 menu-link"></p></a>
 									<a title="Giải thưởng" onClick={this.showModalGiaiThuong} style={{cursor:'pointer'}}><p class="mb-0 menu-link"></p></a>
-									{/* <a onClick={this.showModalChuyenTieu} title="Tặng phi tiêu" style={{cursor:'pointer'}}><p class="mb-0 menu-link"></p></a> */}
-								</div>
-								<div class="menu-right popover-visible-trigger" data-toggle="popover" data-placement="top" data-content={content} data-html="true"><a  title="Tủ đồ" onClick={this.showModalTuDo} style={{cursor:'pointer'}}><img src={btn_tudo} width="100%" alt="" /></a></div>
-									
+								</div>	
 								
 							</div>
 						</div> 
@@ -1008,28 +767,6 @@ class Lucky_Rotation extends React.Component {
 					</div>
 					<div class="modal-body border-0">
 						<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">{message_error}</h2>
-					</div>
-
-					</div>
-				</div>
-			</div>
-
-			
-			{/* <!-- The Modal Thông báo activeVip--> */}
-
-			<div class="modal fade" id="activeVip">
-				<div class="modal-dialog modal-dangnhap">
-					<div class="modal-content bg-transparent border-0">
-
-					{/* <!-- Modal Header --> */}
-					<div class="modal-header border-0 p-0 text-dark">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					{/* <!-- Modal body --> */}
-					<div class="modal-body border-0">
-						<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">Bạn cần active tài khoản VIP để chơi.</h2>
-						<p class="text-center"><a href="https://vip.scoin.vn" target="_blank"><img src={btn_activevip} width="120" alt="Active VIP" /></a></p>
 					</div>
 
 					</div>
@@ -1069,102 +806,6 @@ class Lucky_Rotation extends React.Component {
 							))}
 
 							
-						</div>
-					</div>
-				</div>
-			</div>
-
-
-			{/* <!-- The Modal Tu do--> */}
-			<div class="modal fade" id="Modaltudo">
-				<div class="modal-dialog modal-dialog-md modal-tudo modal-dialog-scrollable">
-					<div class="modal-content bg-transparent border-0">
-						<div class="modal-header border-0 p-0 text-dark">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-						</div>
-
-						<div class="modal-body border-0 py-0 mt-4 mb-0 px-4 scroll-modal-body">
-
-							<ul class="nav nav-pills nav-justified mx-auto">
-								<li class="nav-item">
-									<a class="nav-link py-0" onClick={()=>this.getDataTuDo(user)}><img src={tab_tudo ? btn_phanthuong_active: btn_phanthuong}  width={160} hspace="5" id="image-3" /></a>
-								</li>
-								<li class="nav-item">
-									<a class="nav-link py-0" onClick={()=>this.getHistory(user)}><img src={tab_tudo ? btn_lichsu : btn_lichsu_active} width={160} hspace="5" id="image-4" /></a>
-								</li>
-							</ul>        
-
-							<div class="tab-content">
-								<div class="tab-pane active">
-									{(tab_tudo)?(<div><table class="table table-borderless text-center font-size-14 mb-0" style={{tableLayout: "fixed", borderCollapse: "collapse;", lineHeight: "170%"}}>
-										<thead>
-										<tr class="bg-border-bottom">
-											<th class="p-1 bg-border-right w-25 valign-middle">Phần thưởng</th>
-											<th class="p-1 bg-border-right w-25 valign-middle">Nội dung</th>
-											<th class="p-1 bg-border-right w-25 valign-middle">Thời gian trúng</th>
-										</tr>
-										</thead>
-										<tbody>
-											{listTuDo.map((obj, key) => (
-												
-													<tr key={key} class="bg-border-bottom">
-														<td class="p-0 bg-border-right w-25 valign-middle">{obj.AwardName}</td>
-                    									<td class="p-0 bg-border-right w-25 valign-middle">{obj.AwardDisplay}</td>
-														<td className="p-0 bg-border-right w-25 valign-middle">{this.timeConverter(obj.RewardTime)}</td>
-													</tr>
-												))}				
-										</tbody>
-									</table>
-									<div className="pagination justify-content-center pag-custom mt-1">
-									<Pagination
-										activePage={activeTuDo}
-										itemsCountPerPage={limit}
-										totalItemsCount={countTuDo}
-										pageRangeDisplayed={numberPage}
-										lastPageText={'Trang cuối'}
-										firstPageText={'Trang đầu'}
-										itemClass={"page-item"}
-										linkClass={"page-link"}
-										onChange={(v) => this.handlePageChangeTuDo(v)}
-									/>
-								</div> 
-								</div>):(<div><table class="table table-borderless text-center font-size-14 mb-0" style={{tableLayout: "fixed", borderCollapse: "collapse;", lineHeight: "170%"}}>
-										<thead>
-										<tr class="bg-border-bottom">
-											<th class="p-1 bg-border-right w-33 valign-middle">Phần thưởng</th>
-											<th class="p-1 bg-border-right w-33 valign-middle">Nội dung</th>
-											<th class="p-1 bg-border-right w-33 valign-middle">Thời gian trúng</th>
-										</tr>
-										</thead>
-										<tbody>
-											{listHistory.map((obj, key) => (
-												
-													<tr key={key} class="bg-border-bottom">
-														<td class="p-1 bg-border-right valign-middle">{obj.AwardName}</td>
-                    									<td class="p-1 bg-border-right valign-middle">{obj.AwardDisplay}</td>
-														<td class="p-1  valign-middle">{this.timeConverter(obj.RewardTime)}</td>
-													</tr>
-												))}				
-										</tbody>
-									</table>
-									<div className="pagination justify-content-center pag-custom">
-									<Pagination
-										activePage={activeHistory}
-										itemsCountPerPage={limit}
-										totalItemsCount={countHistory}
-										pageRangeDisplayed={numberPage}
-										lastPageText={'Trang cuối'}
-										firstPageText={'Trang đầu'}
-										itemClass={"page-item"}
-										linkClass={"page-link"}
-										onChange={(v) => this.handlePageChangeHistory(v)}
-									/>
-								</div>
-								</div> )}
-									
-									
-								</div>
-							</div>
 						</div>
 					</div>
 				</div>
@@ -1277,91 +918,6 @@ class Lucky_Rotation extends React.Component {
 				</div>			
 			</div>
 
-			{/* <!-- The Modal Mở quà--> */}
-			<div class="modal fade" id="Modalmoqua">
-				<div class="modal-dialog modal-moqua">
-					<div class="modal-content bg-transparent border-0">
-					<div class="modal-header border-0 p-0">
-						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
-					</div>
-					<div class="modal-body border-0">
-						<div class="mx-auto mt-4 font-size-16" style={{width: "90%"}}>
-							{(dataItem.Type==='TopupScoin')?(<p style={{textAlign:'center', fontSize:20, color:'green'}}>{dataItem.Message}</p>):(<div></div>)}
-							{(dataItem.Type==='Darts')?(<p style={{textAlign:'center', fontSize:20, color:'green'}}>{dataItem.Message}</p>):(<div></div>)}
-							{(dataItem.Type==='ScoinCard')?(<div class="card-body text-center">
-								<p class="card-text mb-4 h6 font-weight-bold text-shadow">Thẻ Scoin mệnh giá: <br /> {dataItem.Amount ? this.numberWithCommas(dataItem.Amount) : 0} vnđ</p>
-								<table class="table table-borderless">
-									<tbody>
-									<tr class="border-bottom">
-										<td class="p-1">Mã code:</td>
-										<td class="p-1">{dataItem.Code}</td>
-									</tr>
-									<tr class="border-bottom">
-										<td class="p-1">Serial:</td>
-										<td class="p-1">{dataItem.Serial}</td>
-									</tr>
-									</tbody>
-								</table>
-								<p class="card-text text-secondary">Hạn sử dụng: {dataItem.Expires}</p>
-								<p class="card-text"></p>
-							</div>):(<div></div>)}
-
-							{(dataItem.Type==='ScoinVoucher')?(<div class="card-body text-center">
-								<p class="card-text mb-4 h6 font-weight-bold text-shadow">Thẻ ScoinVoucher mệnh giá: <br /> {dataItem.Amount ? this.numberWithCommas(dataItem.Amount) : 0} vnđ</p>
-								<table class="table table-borderless">
-									<tbody>
-									<tr class="border-bottom">
-										<td class="p-1">Mã code:</td>
-										<td class="p-1">{dataItem.Code}</td>
-									</tr>
-									<tr class="border-bottom">
-										<td class="p-1">Serial:</td>
-										<td class="p-1">{dataItem.Serial}</td>
-									</tr>
-									</tbody>
-								</table>
-								<p class="card-text text-secondary">Ngày bắt đầu: {dataItem.StartDate} <br />Ngày kết thúc: {dataItem.EndDate}</p>
-								<p class="card-text"></p>
-							</div>):(<div></div>)}
-						</div>
-					</div>
-
-					</div>
-				</div>
-			</div>
-
-
-			{/* <!-- The Modal Mở quà Voucher--> */}
-			<div class="modal fade" id="Modalmoquavoucher">
-				<div class="modal-dialog modal-moqua">
-					<div class="modal-content bg-transparent border-0">
-					<div class="modal-header border-0 p-0">
-						<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
-					</div>
-					<div class="modal-body border-0">
-						<div class="mx-auto mt-2 font-size-16" style={{width: "90%"}}>
-							<div class="card-body text-center">
-								<p class="card-text mb-4 font-size-18 font-weight-bold text-shadow">Tài khoản <span class="text-dark">{dataItem.AccountName}</span> nhận được thẻ Scoin Voucher 20K khi nạp Scoin qua Chuyển khoản Ngân hàng. </p>
-								<table class="table table-borderless">
-									<tbody>
-									<tr class="border-bottom">
-										<td class="p-1 font-size-18">Bạn hãy nạp Scoin để nhận khuyến mại nhé!</td>
-									</tr>
-									<tr class="border-bottom">
-										<td class="p-1 text-secondary">Hạn sử dụng: {dataItem.ExpiredDate}</td>
-
-									</tr>
-									</tbody>
-								</table>
-								<p class="text-center"><a href="https://scoin.vn/nap-tien#9" title="Nạp Scoin" target="_blank"><img src={btn_nap_scoin} width="100" hspace="10" alt="" /></a></p>
-							</div>
-						</div>
-					</div>
-
-					</div>
-				</div>
-			</div>
-
 			{/* <!-- The Modal banner bảo trì--> */}
 			<div class="modal fade" id="Modalbanner">
 				<div class="modal-dialog">
@@ -1416,77 +972,6 @@ class Lucky_Rotation extends React.Component {
 				</div>
 			</div>
 
-			{/* <!-- The Modal Chuyển phi tiêu--> */}
-			<div class="modal fade" id="Modalchuyenphitieu">
-				<div class="modal-dialog modal-tangtieu">
-					<div class="modal-content bg-transparent border-0">
-
-					<div class="modal-header border-0 p-0 text-dark">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-					</div>
-
-					<div class="modal-body border-0 font-size-14">
-						<form class="p-2">
-							<div class="form-group mb-1">
-								<label class="mb-1 font-weight-bold">TÀI KHOẢN: {dataInfoDonate.Username}</label>
-								<button type="button" class="btn btn-block mb-1 py-1 btn-number-phitieu">{dataInfoDonate.Darts} phi tiêu</button>
-								<input id="username" type="text" class="form-control form-control-sm mb-1 font-size-14" placeholder="Tên tài khoản người nhận" height="40px"></input>
-								<input id="numberDart" type="number" class="form-control form-control-sm mb-1 font-size-14" placeholder="Số phi tiêu" height="40px"></input>
-								<p class="font-italic mb-2">(Số phi tiêu tối đa có thể chuyển: <strong>{dataInfoDonate.Darts} phi tiêu</strong>)</p>
-							</div>
-
-							<div class="form-row">
-								<div class="col">
-								<input id="code" type="text" class="form-control form-control-sm font-size-14" placeholder="Mã xác nhận" name="c" height="40px"></input>
-								</div>
-								<div class="col pt-1">
-								<span class="mark font-italic">{dataInfoDonate.ConfirmCode}</span>
-								</div>
-							</div>
-
-							<a title="Xác nhận" ><img src={btn_xac_nhan} width="100" class="d-block mx-auto mt-2" alt=""  onClick={this.comfirmDonate} style={{cursor:'pointer'}}/></a>
-						</form> 
-					</div>
-
-					</div>
-				</div>
-			</div>
-
-			{/* <!-- The Modal Chon Room--> */}
-			<div class="modal fade" id="Modalchonroom">
-				<div class="modal-dialog modal-chonroom modal-dialog-scrollable">
-					<div class="modal-content bg-transparent border-0">
-
-						<div class="modal-header border-0 p-0">
-							<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
-						</div>
-						<div class="modal-body border-0 py-0 mt-4 mb-5 px-4 ml-2 scroll-modal-body">
-							{listSanqua.map((obj, key) => (
-												
-								<a class="text-decoration-none" title="Chơi ngay" key={key} onClick={()=>this.playSanqua(obj)} style={{cursor:"pointer"}}>    	
-									<div class="mx-0 mb-1 session-chonroom d-flex position-relative">
-										<div class="scr-c font-size-14 text-uppercase text-warning-50">
-											<img src={icon_scoin} width="32" alt="" /> <span class="pl-1">Tổng điểm: {obj.PointRule}</span>
-										</div>
-										<div class="scr-status-open font-size-14">
-											<p class="pt-5px pl-2 text-white">Đang diễn ra</p>
-										</div>
-										<div class="scr-info font-size-14 text-white">
-											<p class="font-italic mb-0 pb-1">Bắt đầu: {this.timeEnd(obj.StartTime)}</p>
-											<p class="text-uppercase mb-0">Giải thưởng: {this.showGiaithuong(obj.Awards)}</p>
-										</div>
-										<div class="scr-playnow font-size-14 text-uppercase text-warning">
-											Chơi Ngay
-										</div>
-									</div>
-								</a>
-							))}			
-							
-						</div>
-					</div>
-				</div>
-			</div>
-
 
 			{/* <!-- The Modal Điểm danh thành công--> */}
 			<div class="modal fade" id="ModalListEmpty">
@@ -1506,7 +991,7 @@ class Lucky_Rotation extends React.Component {
 			</div>
 
 
-				<ReactResizeDetector handleWidth={true} handleHeight={true} onResize={this.onResize} />
+				{/* <ReactResizeDetector handleWidth={true} handleHeight={true} onResize={this.onResize} /> */}
 
 
 		</div>)
@@ -1555,7 +1040,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getDonate,
 	getInfoDonate,
 	checkRollup,
-	getListSanQua
+	getListSanQua,
+	getDuatopVtvCard
 }, dispatch)
 
 

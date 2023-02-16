@@ -91,10 +91,9 @@ class MenuAppBar extends React.Component {
 		} else {
 			this.setState({ auth: false });
 			var code = Ultilities.parse_query_string("auth-code", window.location.href);
-			var fb_mess = Ultilities.parse_query_string("fbmessid", window.location.href);
-			var currentPath=localStorage.getItem("currentPath");
+			// var currentPath=localStorage.getItem("currentPath");
 			if (code != null) {
-				var url = Ultilities.base_url() + "darts/user-vtvcab-join";
+				var url = Ultilities.base_url() + "darts/user-join-vtvcab";
 					var header = {
 						headers: {
 							"Content-Type": "application/text",
@@ -103,17 +102,11 @@ class MenuAppBar extends React.Component {
 					}
 
 					axios.get(url, header).then(function (response) {
-						var user_save = response.data.data;
+						var user_save = response.data;
 						user_save.expired = new Date();
 						localStorage.setItem("user", JSON.stringify(user_save));
-						_this.setState({ user: response.data.data });
-						_this.props.getInfoUser(user_save.access_token).then(function () {
-							var newurl = "https://splay.vn:3003/userinfo";
-							axios.post(newurl, { account: _this.props.data.accountNumber, messid: fb_mess }).then(function (response1) {
-								console.log(response1);
-								// window.location.replace(`${window.location.protocol}//${window.location.host}/loginwidget1`);
-							});
-						});
+						_this.setState({ user: response.data });
+						window.location.replace(`${window.location.protocol}//${window.location.host}`);
 					}).catch(function (error) {
 						_this.props.setStatusServer();
 						localStorage.removeItem("user");
