@@ -22,7 +22,8 @@ import {
 	getDonate,
 	getInfoDonate,
 	checkRollup,
-	getListSanQua
+	getListSanQua,
+	getDuatopVtvCard
 } from '../../../modules/lucky'
 import {
 	getData
@@ -221,7 +222,7 @@ class Lucky_Rotation extends React.Component {
 		// localStorage.setItem("update29", true);
 		// $('#Modalbanner').modal('show');
 		
-		this.getVinhDanh(1,1);
+		this.getDuatopVtvCard(2,1);
 
 
 		if (user !== null) {
@@ -324,11 +325,11 @@ class Lucky_Rotation extends React.Component {
 
 	
 
-	getVinhDanh=(type, pageNumber)=>{
+	getDuatopVtvCard=(type, pageNumber)=>{
 		const {limit}=this.state;
 		var offsetVinhDanh=(pageNumber-1)*limit;
 		this.setState({type:type, listVinhDanh:[], countVinhDanh:0}, ()=>{
-			this.props.getVinhDanh(limit, offsetVinhDanh, type).then(()=>{
+			this.props.getDuatopVtvCard(limit, offsetVinhDanh, type).then(()=>{
 				var data=this.props.dataVinhDanh;
 				if(data!==undefined){
 					if(data.Status===0){
@@ -505,7 +506,7 @@ class Lucky_Rotation extends React.Component {
 
 	handlePageChangeVinhDanh=(type, pageNumber)=> {
 		this.setState({activeVinhDanh: pageNumber},()=>{
-			this.getVinhDanh(type, pageNumber)
+			this.getDuatopVtvCard(type, pageNumber)
 		})
 
 	}
@@ -712,7 +713,7 @@ class Lucky_Rotation extends React.Component {
 								<div class="bxh_m position-relative">
 									<ul class="nav nav-pills_m nav-justified" role="tablist">
 										<li class="nav-item">
-											<a class="nav-link_m btn-bxhduatop_m p-0" onClick={()=>this.getVinhDanh(2,1)}><img src={btn_bxhduatop_active} width="95%" hspace="5" id="image-2" /></a>
+											<a class="nav-link_m btn-bxhduatop_m p-0" ><img src={btn_bxhduatop_active} width="95%" hspace="5" id="image-2" /></a>
 										</li>
 									</ul>
 									
@@ -730,8 +731,8 @@ class Lucky_Rotation extends React.Component {
 													{listVinhDanh.map((obj, key) => (
 														<tr key={key} class="bg-border-bottom_m">
 															<td className="p-0 bg-border-right_m w-33">{obj.Username}</td>
-															<td class="p-0 bg-border-right_m w-33" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.AwardName}>{obj.AwardName}</span></td>
-															<td className="p-0 w-33 w-33">{this.timeConverter(obj.RewardTime)}</td>
+															<td class="p-0 bg-border-right_m w-33" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.TotalPoints}>{obj.TotalPoints}</span></td>
+															<td className="p-0 w-33 w-33">{obj.Throws}</td>
 														</tr>
 													))}
 												</tbody>
@@ -1092,7 +1093,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getDonate,
 	getInfoDonate,
 	checkRollup,
-	getListSanQua
+	getListSanQua,
+	getDuatopVtvCard
 }, dispatch)
 
 

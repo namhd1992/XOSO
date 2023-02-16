@@ -224,7 +224,7 @@ class Lucky_Rotation extends React.Component {
 		// localStorage.setItem("update29", true);
 		
 
-		this.getDuatopVtvCard(1,1);
+		this.getDuatopVtvCard(2,1);
 		$('.popover-visible-trigger').popover('show').off('click'); 
 
 
