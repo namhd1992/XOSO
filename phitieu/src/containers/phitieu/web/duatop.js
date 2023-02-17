@@ -289,7 +289,7 @@ class Lucky_Rotation extends React.Component {
 	
 						this.getStatus(data.Data)
 					}else if(data.Status===2){
-						this.setState({msg:"Hiện tại phiên chơi đã kết thúc. Mời bạn sang tham gia Săn Quà."})
+						this.setState({msg:"Hiện tại phiên chơi đã kết thúc."})
 						$('#ModalnoneDuaTop').modal('show');
 					}else if(data.Status===3){
 						this.logoutAction();
@@ -867,6 +867,7 @@ class Lucky_Rotation extends React.Component {
 
 				<div class="modal-body border-0">
 					<h2 class="font-size-16 pt-5 font-weight-bold text-uppercase text-center">{msg}</h2>
+					<p class="text-center"><a title="Thoát" onClick={this.exit}><img src={btn_thoat} width="100" alt="" /></a></p>
 				</div>
 
 				</div>
@@ -893,9 +894,9 @@ class Lucky_Rotation extends React.Component {
 				<div class="modal-content bg-transparent border-0">
 
 				<div class="modal-body border-0">
-					<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>Bạn đã hết Phi Tiêu.</h2>
-					<p class="font-weight-bold text-uppercase text-center" style={{fontSize:13}}> Vui lòng nạp thêm Scoin để nhận Phi Tiêu và tiếp tục chơi.</p>
-					<p class="text-center"><a href="https://scoin.vn/" title="Nạp Scoin" target="_blank"><img src={btn_nap_scoin} width="100" hspace="10" alt="" /></a><a title="Thoát" onClick={this.exit}><img src={btn_thoat} width="100" alt="" /></a></p>
+					<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>BẠN ĐÃ HẾT PHI TIÊU.</h2>
+					<p class="font-weight-bold text-uppercase text-center" style={{fontSize:13}}>VUI LÒNG THỰC HIỆN NHIỆM VỤ ĐIỂM DANH HÀNG NGÀY HOẶC MUA GÓI CƯỚC TRUYỀN HÌNH ĐỂ NHẬN PHI TIÊU VÀ TIẾP TỤC CHƠI.</p>
+					<p class="text-center"><a title="Thoát" onClick={this.exit}><img src={btn_thoat} width="100" alt="" /></a></p>
 				</div>
 
 				</div>

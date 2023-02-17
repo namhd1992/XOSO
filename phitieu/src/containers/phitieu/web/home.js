@@ -121,6 +121,10 @@ import topup_scoin from './images/topup-scoin.png';
 import the_scoin from './images/the-scoin.png';
 import nap_voucher_scoin from './images/nap-voucher-scoin.png';
 
+import sua_tam_nuoc_hoa from './images/sua-tam-nuoc-hoa.jpg';
+import noi_chien_khong_dau from './images/noi-chien-khong-dau.jpg';
+import goi_massage from './images/goi-massage.jpg';
+
 
 
 // import muiten from './images/muiten.png';
@@ -268,24 +272,25 @@ class Lucky_Rotation extends React.Component {
 
 
 	showModalGiaiThuong=()=>{
-		this.props.getMoreSessions().then(()=>{
-			var data=this.props.dataSesions;
-			if(data!==undefined){
-				if(data.Status===0){
-					this.setState({listSesstions:data.Data}, ()=>{
-						$('#Modalgiaithuong').modal('show');
-					})
-				}else if(data.Status===2){
-					this.setState({message_error:data.Message}, ()=>{
-						$('#myModal11').modal('show');
-					})
-				}else if(data.Status===3){
-					this.logoutAction();
-				}else{
-					console.log("Lỗi")
-				}
-			}
-		})
+		// this.props.getMoreSessions().then(()=>{
+		// 	var data=this.props.dataSesions;
+		// 	if(data!==undefined){
+		// 		if(data.Status===0){
+		// 			this.setState({listSesstions:data.Data}, ()=>{
+		// 				$('#Modalgiaithuong').modal('show');
+		// 			})
+		// 		}else if(data.Status===2){
+		// 			this.setState({message_error:data.Message}, ()=>{
+		// 				$('#myModal11').modal('show');
+		// 			})
+		// 		}else if(data.Status===3){
+		// 			this.logoutAction();
+		// 		}else{
+		// 			console.log("Lỗi")
+		// 		}
+		// 	}
+		// })
+		$('#Modalgiaithuong').modal('show');
 	}
 
 
@@ -782,30 +787,28 @@ class Lucky_Rotation extends React.Component {
 						<div class="modal-header border-0 p-0">
 							<button type="button" class="close text-dark" data-dismiss="modal">&times;</button>
 						</div>
-						<div class="modal-body border-0 py-0 my-4 px-4 ml-2 ">   
-							{listSesstions.map((obj, key) => (
-								<div class="row mx-0 mb-1 border-giaithuong-e position-relative d-flex justify-content-center" key={key}>
-									<div class="col-12 text-center text-brown pt-1">
-										<h2 class="font-size-16 font-weight-bold text-uppercase mb-0">{this.getTypeGiaiThuong(obj.SessionType)}</h2>
-										{(obj.Status===0)?(<p class="font-size-16 mb-0">Còn: {this.timeModalGiaiThuowng(obj.StartTime)}</p>):(<div></div>)}
-										{(obj.Status===1)?(<p class="font-size-16 mb-0 text-yellow text-blink"><span class="spinner-grow text-yellow" style={{width: ".8rem", height: ".8rem"}}></span> Đang diễn ra ... </p>):(<div></div>)}
-										{(obj.Status===2)?( <p class="font-size-16 mb-0 text-danger">Đã kết thúc {this.timeEnd(obj.EndTime)}</p>):(<div></div>)}
-										
-									</div>
-
-									{obj.Awards.map((v, j) => (
-										<div class="col-4 text-center" key={j}>
-											<p class="m-0"><img src={this.getImgItem(v.Name)} alt="" width="60%" /></p>
-											<p class="font-size-16 text-yellow">{v.Description}</p>
-										</div>
-									))}
-
-									{(obj.Status===2)?(<img class="img-dacochu" src={img_dacochu} alt="" width="30%" />):(<div></div>)}
-									
+						<div class="modal-body border-0 py-0 mb-2 mt-3 px-3 scroll-modal-body w-100">        
+							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
+							<div class="col-12 text-center text-brown pt-1">
+								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn btn-warning">Giải nhất</h2> 
+									<p class="font-size-3vw font-weight-bold mb-1">Gối massage G-MINNIE EZ</p>
+									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={goi_massage} alt="" width="30%" /></a></p>              
 								</div>
-							))}
-
-							
+							</div>
+							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
+							<div class="col-12 text-center text-brown pt-1">
+								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn text-danger border-danger">Giải nhì</h2> 
+									<p class="font-size-3vw font-weight-bold mb-1">Nồi chiên không dầu 4.5L Sunhouse Mama SHD4086W</p>
+									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={noi_chien_khong_dau} alt="" width="30%" /></a></p>              
+								</div>
+							</div>
+							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
+							<div class="col-12 text-center text-brown pt-1">
+								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn text-danger border-danger">Giải ba</h2> 
+									<p class="font-size-3vw font-weight-bold mb-1">Sữa tắm hương nước hoa Adiva Sweet Memories</p>
+									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={sua_tam_nuoc_hoa} alt="" width="30%" /></a></p>              
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -871,7 +874,7 @@ class Lucky_Rotation extends React.Component {
 										</tr>
 										<tr>
 											<td class="p-1">Khách hàng mua gói cước tháng</td>
-											<td class="p-1">50</td>
+											<td class="p-1">40</td>
 											<td class="p-1">40</td>
 										</tr>
 										<tr>

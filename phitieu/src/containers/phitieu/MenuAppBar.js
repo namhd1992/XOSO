@@ -75,12 +75,12 @@ class MenuAppBar extends React.Component {
 			var duration = moment.duration(end.diff(now));
 			var millisecond = Math.floor(duration.asMilliseconds()) + 86400000;
 			if (millisecond > 0) {
-				_this.props.getInfoUser(user.Token).then(function () {
-					console.log(_this.props.dataInfoUser)
-					// if (_this.props.dataInfoUser.Status === 1) {
-					// 	_this.logoutAction();
-					// }
-				});
+				// _this.props.getInfoUser(user.Token).then(function () {
+				// 	console.log(_this.props.dataInfoUser)
+				// 	// if (_this.props.dataInfoUser.Status === 1) {
+				// 	// 	_this.logoutAction();
+				// 	// }
+				// });
 				this.setState({
 					auth: true,
 					user: JSON.parse(localStorage.getItem("user")),
