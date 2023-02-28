@@ -316,7 +316,7 @@ class Lucky_Rotation extends React.Component {
 
 			var username = new Konva.Text({
 				x: bg_x*0.63+mg_left,
-				y: 5,
+				y: 10,
 				text:user.Username,
 				fontSize: 13,
 				fontFamily: 'Calibri',
@@ -442,7 +442,7 @@ class Lucky_Rotation extends React.Component {
 			layer.add(tieuconlai)
 			layer.add(rect_timing);
 			layer.add(username);
-			layer.add(vip_level);
+			// layer.add(vip_level);
 			layer.add(tg_conlai);
 			layer.add(auto_text);
 			layer.add(tong_diem);
@@ -1148,7 +1148,7 @@ class Lucky_Rotation extends React.Component {
 
 								<div class="modal-body border-0">
 									<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">BẠN ĐÃ HẾT PHI TIÊU</h2>
-									<p class="font-size-14 font-weight-bold text-uppercase text-center" style={{marginBottom:10}}>VUI LÒNG THỰC HIỆN NHIỆM VỤ ĐIỂM DANH HÀNG NGÀY HOẶC MUA GÓI CƯỚC TRUYỀN HÌNH ĐỂ NHẬN PHI TIÊU VÀ TIẾP TỤC CHƠI.</p>
+									<p class="font-size-14 font-weight-bold text-uppercase text-center" style={{marginBottom:10}}>Vui lòng thực hiện nhiệm vụ điểm danh hàng ngày hoặc mua gói cước truyền hình để nhận phi tiêu và tiếp tục chơi.</p>
 									<p class="text-center"><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
 								</div>
 

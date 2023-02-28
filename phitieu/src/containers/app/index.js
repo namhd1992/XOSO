@@ -17,8 +17,13 @@ import DuaTop_Mobile_IOS_Vertical from '../phitieu/mobile/ios/vertical/duatop'
 import {
 	isAndroid,
 	isIOS,
-	isMobile
+	isMobile, 
+	isMobileOnly,
+	osVersion
   } from "react-device-detect";
+import '../phitieu/mobile/css/style.css';
+import $ from 'jquery';
+
 class App extends React.Component {
 
 	constructor(props) {
@@ -27,6 +32,7 @@ class App extends React.Component {
 			main: null,
 			backgroundColor:'#fff',
 			horizontal:false,
+			message_error:'',
 		};
 	}
 
@@ -40,8 +46,22 @@ class App extends React.Component {
 		}
 	}
 
+	componentDidMount(){
+		if(isAndroid){
+			var os=osVersion;
+			if(osVersion.indexOf('.')!==-1){
+				os=osVersion.substring(0, osVersion.indexOf('.'));
+			}
+			if(+os < 6){
+				this.setState({message_error:'Phiên bản android của bạn quá thấp, bạn cần nâng cấp lên phiên bản cao hơn để chơi.'}, ()=>{
+					$('#versionAndroid').modal('show');
+				})
+			}
+		}
+	}
 	render() {
-		const {horizontal}=this.state;
+		const {horizontal, message_error}=this.state;
+		console.log(message_error)
 		return (
 			<div style={{ backgroundColor: this.state.backgroundColor }}>
 				{/* <div style={{maxWidth:"1200px", margin:"auto", background: this.state.backgroundColor }}> */}
@@ -70,6 +90,21 @@ class App extends React.Component {
 						<Route exact path="/duatop" component={DuaTop_Web} />
 					</main>
 				</div>)}
+
+				<div className="modal fade" id="versionAndroid" style={{zIndex:99999}}>
+					<div class="modal-dialog modal-dangnhap">
+						<div class="modal-content bg-transparent border-0">
+						<div class="modal-header border-0 p-0 text-dark">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+						</div>
+						<div class="modal-body border-0">
+							<h2 class="font-size-16 pt-3 font-weight-bold text-uppercase text-center">{message_error}</h2>
+						</div>
+
+						</div>
+					</div>
+				</div>
+
 				
 			</div>
 		)

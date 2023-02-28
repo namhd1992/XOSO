@@ -5,7 +5,7 @@
 
 html {scroll-behavior: smooth; font-size: 26px; font-family: Arial, Helvetica, sans-serif;}
 .page_m {max-width: 960px; background:url(../images/bg-page.png) repeat; padding: 0; margin: 0 auto;}
-.bg-top_m {background:url(../images/bg-top.png) no-repeat; background-position: top; background-size: 100%; display: block; height: 100%; width:100%;}
+.bg-top_m {background:url(../images/bgw-top.png) no-repeat; background-position: top; background-size: 100%; display: block; height: 100%; width:100%;}
 .btn-s_m {padding-top: 90%; width:100%; text-align: center;}
 .bxh_m { padding-top: 10%;}
 .nav-pills_m .nav-link_m.active {background: none}

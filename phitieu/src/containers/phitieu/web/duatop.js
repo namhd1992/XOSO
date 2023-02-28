@@ -845,10 +845,10 @@ class Lucky_Rotation extends React.Component {
 			<p class="font-size-16 text-white mb-0 text-center">{user.Username}</p>
 		</div>
 
-		<div class="phitieu-status marquee">
-			<div class="marquee_inner">            
+		<div class="phitieu-status">
+			<div style={{textAlign:'center'}}>            
 				<span class="m-0 font-size-16 font-weight-bold text-shadow pr-5">Số phi tiêu còn lại: <strong>{countDart}</strong></span>		
-				<span class="m-0 font-size-16 font-weight-bold text-shadow pr-5">{awardsContent}</span>	
+				{/* <span class="m-0 font-size-16 font-weight-bold text-shadow pr-5">{awardsContent}</span>	 */}
 			 </div>    	
 		</div>
 		<div class="diemcaonhat">
@@ -895,7 +895,7 @@ class Lucky_Rotation extends React.Component {
 
 				<div class="modal-body border-0">
 					<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>BẠN ĐÃ HẾT PHI TIÊU.</h2>
-					<p class="font-weight-bold text-uppercase text-center" style={{fontSize:13}}>VUI LÒNG THỰC HIỆN NHIỆM VỤ ĐIỂM DANH HÀNG NGÀY HOẶC MUA GÓI CƯỚC TRUYỀN HÌNH ĐỂ NHẬN PHI TIÊU VÀ TIẾP TỤC CHƠI.</p>
+					<p class="font-weight-bold text-center" style={{fontSize:13}}>Vui lòng thực hiện nhiệm vụ điểm danh hàng ngày hoặc mua gói cước truyền hình để nhận phi tiêu và tiếp tục chơi.</p>
 					<p class="text-center"><a title="Thoát" onClick={this.exit}><img src={btn_thoat} width="100" alt="" /></a></p>
 				</div>
 

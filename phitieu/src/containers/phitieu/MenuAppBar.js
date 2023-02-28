@@ -44,9 +44,9 @@ class MenuAppBar extends React.Component {
 	logoutAction = () => {
 		this.setState({ auth: false });
 		localStorage.removeItem("user");
-		window.location.replace(
-			`https://graph.vtcmobile.vn/oauth/authorize?client_id=92d34808c813f4cd89578c92896651ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
-		);
+		// window.location.replace(
+		// 	`https://graph.vtcmobile.vn/oauth/authorize?client_id=92d34808c813f4cd89578c92896651ca&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
+		// );
 
 		// window.location.replace(
 		// 	`http://sandbox.graph.vtcmobile.vn/oauth/authorize?client_id=UH8DN779CWCMnCyeXGrm2BRqiTlJajUyZUEM0Kc&redirect_uri=${window.location.protocol}//${window.location.host}&action=logout&agencyid=0`,
@@ -56,64 +56,58 @@ class MenuAppBar extends React.Component {
 	componentDidMount() {
 		var {dispatch}=this.props;
 		var user = JSON.parse(localStorage.getItem("user"));
+		var code = Ultilities.parse_query_string("auth-code", window.location.href);
 		var _this = this;
-		if (this.props.pathname === "/game") {
-			this.props.changeTitle("Danh Sách Game");
-		}
-		if (this.props.pathname === "/auction") {
-			this.props.changeTitle("Shop");
-		}
-		if (this.props.pathname === "/giftcode") {
-			this.props.changeTitle("Giftcode");
-		}
-		if (this.props.pathname === "/lucky") {
-			this.props.changeTitle("May Mắn");
-		}
-		if (localStorage.getItem("user") != null) {
-			var now = moment(new Date()); //todays date
-			var end = moment(user.expired); // another date
-			var duration = moment.duration(end.diff(now));
-			var millisecond = Math.floor(duration.asMilliseconds()) + 86400000;
-			if (millisecond > 0) {
-				// _this.props.getInfoUser(user.Token).then(function () {
-				// 	console.log(_this.props.dataInfoUser)
-				// 	// if (_this.props.dataInfoUser.Status === 1) {
-				// 	// 	_this.logoutAction();
-				// 	// }
-				// });
-				this.setState({
-					auth: true,
-					user: JSON.parse(localStorage.getItem("user")),
-				});
-			} else {
-				this.logoutAction();
-			}
-		} else {
-			this.setState({ auth: false });
-			var code = Ultilities.parse_query_string("auth-code", window.location.href);
-			// var currentPath=localStorage.getItem("currentPath");
-			if (code != null) {
-				var url = Ultilities.base_url() + "darts/user-join-vtvcab";
-					var header = {
-						headers: {
-							"Content-Type": "application/text",
-							"auth-code": code,
-						}
-					}
 
-					axios.get(url, header).then(function (response) {
+		// if (localStorage.getItem("user") != null) {
+		// 	var now = moment(new Date()); //todays date
+		// 	var end = moment(user.expired); // another date
+		// 	var duration = moment.duration(end.diff(now));
+		// 	var millisecond = Math.floor(duration.asMilliseconds()) + 86400000;
+		// 	if (millisecond > 0) {
+		// 		// _this.props.getInfoUser(user.Token).then(function () {
+		// 		// 	console.log(_this.props.dataInfoUser)
+		// 		// 	// if (_this.props.dataInfoUser.Status === 1) {
+		// 		// 	// 	_this.logoutAction();
+		// 		// 	// }
+		// 		// });
+		// 		this.setState({
+		// 			auth: true,
+		// 			user: JSON.parse(localStorage.getItem("user")),
+		// 		});
+		// 	} else {
+		// 		this.logoutAction();
+		// 	}
+		// } else {
+		// 	this.setState({ auth: false });
+		// }
+
+		if (code != null) {
+			var url = Ultilities.base_url() + "darts/user-join-vtvcab";
+				var header = {
+					headers: {
+						"Content-Type": "application/text",
+						"auth-code": code,
+					}
+				}
+
+				axios.get(url, header).then(function (response) {
+					if(response.data.Status===0){
 						var user_save = response.data;
 						user_save.expired = new Date();
 						localStorage.setItem("user", JSON.stringify(user_save));
 						_this.setState({ user: response.data });
 						window.location.replace(`${window.location.protocol}//${window.location.host}`);
-					}).catch(function (error) {
-						_this.props.setStatusServer();
-						localStorage.removeItem("user");
-						localStorage.removeItem("userInfo");
-						_this.setState({ auth: false });
-					})
-			}
+					}else{
+						_this.logoutAction();
+					}
+					
+				}).catch(function (error) {
+					_this.props.setStatusServer();
+					localStorage.removeItem("user");
+					localStorage.removeItem("userInfo");
+					_this.setState({ auth: false });
+				})
 		}
 	}
 

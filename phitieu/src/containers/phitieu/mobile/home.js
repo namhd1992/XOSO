@@ -29,6 +29,11 @@ import {
 	getData
 } from '../../../modules/profile';
 
+import {
+	osVersion,
+	isAndroid
+  } from "react-device-detect";
+
 
 import banner_thongbao_off from './images/banner-thongbao-off.png';
 import icon_scoin from './images/icon-scoin.png';
@@ -198,6 +203,7 @@ class Lucky_Rotation extends React.Component {
 		};
 	}
 	componentWillMount(){
+		
 		var user = JSON.parse(localStorage.getItem("user"));
 		window.addEventListener("resize", this.setScreenOrientation);
 		window.removeEventListener('scroll', this.handleScroll);
@@ -211,11 +217,24 @@ class Lucky_Rotation extends React.Component {
 				
 			}
 		}
+		window.screen.orientation.lock('landscape')
 	}
 
 
 
 	componentDidMount(){
+		// var os=osVersion;
+		// if(osVersion.indexOf('.')!==-1){
+		// 	os=osVersion.substring(0, osVersion.indexOf('.'));
+		// }
+		// if(isAndroid){
+		// 	if(+os < 6){
+		// 		$('#myModal11').modal('show');
+		// 		this.setState({message_error:'Phiên bản android của bạn quá thấp, bạn cần nâng cấp lên phiên bản cao hơn để chơi.'})
+		// 	}
+		// }
+
+
 		var user = JSON.parse(localStorage.getItem("user"));
 		$('.popover-visible-trigger').popover('show').off('click'); 
 		// var update29=localStorage.getItem("update29");
@@ -717,7 +736,7 @@ class Lucky_Rotation extends React.Component {
 								<div class="bxh_m position-relative">
 									<ul class="nav nav-pills_m nav-justified" role="tablist">
 										<li class="nav-item">
-											<a class="nav-link_m btn-bxhduatop_m p-0" ><img src={btn_bxhduatop_active} width="95%" hspace="5" id="image-2" /></a>
+											<a class="nav-link_m btn-bxhduatop_m p-0" ><img src={btn_bxhduatop_active} width="50%" hspace="5" id="image-2" /></a>
 										</li>
 									</ul>
 									
@@ -818,7 +837,7 @@ class Lucky_Rotation extends React.Component {
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 					<div class="modal-body border-0">
-						<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">{message_error}</h2>
+						<h2 class="font-size-16 pt-3 font-weight-bold text-uppercase text-center">{message_error}</h2>
 					</div>
 
 					</div>

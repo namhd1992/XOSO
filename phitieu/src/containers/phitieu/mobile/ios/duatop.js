@@ -40,7 +40,8 @@ import btn_sanqua from '../images/btn-sanqua.png';
 import btn_thoat from '../images/btn-thoat.png';
 import rotate from '../images/rotate.png';
 
-import bg_page_sanqua from '../images/bg-page-duatop.png';
+// import bg_page_sanqua from '../images/bg-page-duatop.png';
+import bg_page_duatop from '../images/bg_page_duatop_vtv.png';
 import btn_nap_scoin from '../images/btn-nap-scoin.png';
 
 
@@ -185,7 +186,6 @@ class Lucky_Rotation extends React.Component {
 		SEGMENTS=SEGMENTS.map(v => {
 			return v*delta
 		})
-
 		this.setState({delta:delta, innerHeight:window.innerHeight,  innerWidth:window.innerWidth})
 	}
 
@@ -210,6 +210,8 @@ class Lucky_Rotation extends React.Component {
 			$('#Modalfbview').modal('show');
 		}
 		// var canvas=document.getElementById("canvas");
+		// var ctx = canvas.getContext("2d");
+		// ctx.rotate(20 * Math.PI / 180);
 		// canvas.addEventListener ("mouseout", this.checkoutCanvas);
 
 		// this.toggleFullScreen();
@@ -287,7 +289,7 @@ class Lucky_Rotation extends React.Component {
 					bgGameImg.setZIndex(0)
 					_this.setState({bgGameImg:bgGameImg})
 			};
-			bggame.src = bg_page_sanqua;
+			bggame.src = bg_page_duatop;
 
 			
 			var timing = new Image();
@@ -335,7 +337,7 @@ class Lucky_Rotation extends React.Component {
 
 			var username = new Konva.Text({
 				x: bg_x*0.65,
-				y: 5,
+				y: 10,
 				text:user.Username,
 				fontSize: 13,
 				fontFamily: 'Calibri',
@@ -397,7 +399,7 @@ class Lucky_Rotation extends React.Component {
 
 			var auto_text = new Konva.Text({
 				x: 35,
-				y: bg_y*0.90,
+				y: bg_y*0.85,
 				text: "PHÓNG TIÊU TỰ ĐỘNG",
 				fontSize: 15,
 				fontStyle:"bold",
@@ -408,8 +410,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var tong_diem = new Konva.Text({
-				x: bg_x*0.1,
-				y: bg_y*0.55,
+				x: bg_x*0.12,
+				y: bg_y*0.53,
 				text: "TỔNG ĐIỂM",
 				fontSize: 15,
 				fontStyle:"bold",
@@ -422,8 +424,8 @@ class Lucky_Rotation extends React.Component {
 			
 
 			var txt_points = new Konva.Text({
-				x: bg_x*0.1,
-				y: bg_y*0.65,
+				x: bg_x*0.12,
+				y: bg_y*0.63,
 				text: "0000",
 				fontSize: 16,
 				fontFamily: 'Calibri',
@@ -434,8 +436,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var ds_top = new Konva.Text({
-				x: bg_x*0.74,
-				y: bg_y*0.54,
+				x: bg_x*0.78,
+				y: bg_y*0.52,
 				text:"ĐIỂM CAO NHẤT",
 				fontSize: 15,
 				fontFamily: 'Calibri',
@@ -447,8 +449,8 @@ class Lucky_Rotation extends React.Component {
 
 
 			var hight_score = new Konva.Text({
-				x: bg_x*0.77,
-				y: bg_y*0.62,
+				x: bg_x*0.80,
+				y: bg_y*0.60,
 				text:"0000",
 				fontSize: 16,
 				fontFamily: 'Calibri',
@@ -461,7 +463,7 @@ class Lucky_Rotation extends React.Component {
 			layer.add(tieuconlai)
 			layer.add(rect_timing);
 			layer.add(username);
-			layer.add(vip_level);
+			// layer.add(vip_level);
 			layer.add(tg_conlai);
 			layer.add(auto_text);
 			layer.add(tong_diem);
@@ -469,14 +471,13 @@ class Lucky_Rotation extends React.Component {
 			layer.add(ds_top);
 			layer.add(hight_score);
 
+
 			stage.add(layer);
 			this.setState({tieuconlai:tieuconlai,rect_timing:rect_timing, username:username, vip_level:vip_level, tg_conlai: tg_conlai, txt_points:txt_points, hight_score:hight_score},()=>{
 				this.getLuckyInfo(2);
 			})
 		
 			this.getMoreSessions();
-
-
 			
 			var checkbox = new Image();
 			checkbox.onload = function () {
@@ -1194,7 +1195,7 @@ class Lucky_Rotation extends React.Component {
 		return (
 				<div id="game" style={{backgroundColor:'black'}}>
 						{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
-						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.88, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
+						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
 						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
 
 						<div class="modal fade" id="ModalnoneDuaTop" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
@@ -1203,7 +1204,7 @@ class Lucky_Rotation extends React.Component {
 
 								<div class="modal-body border-0">
 									<h2 class="font-size-16 pt-4 font-weight-bold text-uppercase text-center">{msg}</h2>
-									<p class="text-center pt-1"> <a href="sanqua"><img src={btn_sanqua} width="120" alt="Thoát" /></a></p>
+									<p class="text-center pt-1"> <a href="sanqua"><img src={btn_thoat} width="120" alt="Thoát" /></a></p>
 								</div>
 
 								</div>
@@ -1231,7 +1232,7 @@ class Lucky_Rotation extends React.Component {
 
 								<div class="modal-body border-0">
 									<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>BẠN ĐÃ HẾT PHI TIÊU.</h2>
-									<p class="pt-1 font-weight-bold text-uppercase text-center" style={{fontSize:13}}>VUI LÒNG THỰC HIỆN NHIỆM VỤ ĐIỂM DANH HÀNG NGÀY HOẶC MUA GÓI CƯỚC TRUYỀN HÌNH ĐỂ NHẬN PHI TIÊU VÀ TIẾP TỤC CHƠI.</p>
+									<p class="pt-1 font-weight-bold text-uppercase text-center" style={{fontSize:13}}>Vui lòng thực hiện nhiệm vụ điểm danh hàng ngày hoặc mua gói cước truyền hình để nhận phi tiêu và tiếp tục chơi.</p>
 									<p class="text-center"><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
 								</div>
 
