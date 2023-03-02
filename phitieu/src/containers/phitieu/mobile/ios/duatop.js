@@ -82,7 +82,7 @@ var SCORE_VALUES = [6, 13, 4, 18, 1, 20, 5, 12, 9, 14, 11, 8, 16, 7, 19, 3, 17, 
 var segmentIndex = 0; // index vysece
 var segmentType = 0;  // typ policka
 var segment = 0;
-var width_bgImg=0;
+var height_bgImg=0;
 
 var totalScore = 0;
 
@@ -218,14 +218,7 @@ class Lucky_Rotation extends React.Component {
 		bg_x=width;
 		bg_y=height*deltal_device/deltal_img;
 
-		// if(width/height > 2){
-		// 	bg_x=width;
-		// 	bg_y=height*deltal_img/deltal_device;
-		// }else{
-		// 	bg_x=width;
-		// 	bg_y=height*deltal_device/deltal_img;
-		// }
-		width_bgImg=bg_y;
+		height_bgImg=bg_y;
 
 		if(horizontal){
 			var stage = new Konva.Stage({
@@ -1195,7 +1188,7 @@ class Lucky_Rotation extends React.Component {
 		return (
 				<div id="game" style={{backgroundColor:'black'}}>
 						{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
-						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
+						<div id="div_checkbox" style={{position:'absolute', top:height_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
 						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
 
 						<div class="modal fade" id="ModalnoneDuaTop" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
