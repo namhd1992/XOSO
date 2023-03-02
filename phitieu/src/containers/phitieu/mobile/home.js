@@ -217,7 +217,6 @@ class Lucky_Rotation extends React.Component {
 				
 			}
 		}
-		window.screen.orientation.lock('landscape')
 	}
 
 

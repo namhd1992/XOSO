@@ -6,8 +6,8 @@
 html {scroll-behavior: smooth; font-size: 26px; font-family: Arial, Helvetica, sans-serif;}
 .page_m {max-width: 960px; background:url(../images/bg-page.png) repeat; padding: 0; margin: 0 auto;}
 .bg-top_m {background:url(../images/bgw-top.png) no-repeat; background-position: top; background-size: 100%; display: block; height: 100%; width:100%;}
-.btn-s_m {padding-top: 90%; width:100%; text-align: center;}
-.bxh_m { padding-top: 10%;}
+.btn-s_m {padding-top: 60%; width:100%; text-align: center;}
+.bxh_m { padding-top: 7%;}
 .nav-pills_m .nav-link_m.active {background: none}
 .bg-bxh_m {background:url(../images/bg-bxh.png) no-repeat; background-position: top; background-size: 100%; height: 100%; width:100%;}
 .font-size-3vw_m {font-size:3vw;}
@@ -17,8 +17,8 @@ html {scroll-behavior: smooth; font-size: 26px; font-family: Arial, Helvetica, s
 .btn-h_m { width:100%; text-align: center;}
 .pt-3vw_m {padding-top: 2%;}
 .bg-bottom_m {background:url(../images/bg-bottom.png) no-repeat; background-position: bottom; background-size: 100%; display: block; }
-.menu-left_m {position: absolute; left: 1%; top: 15%; background:url(../images/btn-ahgl.png) no-repeat; background-size: 100%; width: 28%; height: 15%;}
-.menu-left_m p.menu-link_m {width: 100%; height: 18%; margin-top: 2%;}
+.menu-left_m {position: absolute; left: 1%; top: 18%; background:url(../images/btn-ahgl.png) no-repeat; background-size: 100%; width: 22%; height: 12%;}
+.menu-left_m p.menu-link_m {width: 100%; height: 48%; margin-top: 2%;}
 .menu-left_m p.menu-link_m.link-first_m {margin-top: 12%}
 .menu-right_m {position: absolute; right: 1%; top: 20%; width: 23%; height: 5%;}
 .bg-page-sanqua_m {background:url(../images/bg-page-sanqua.png) no-repeat; background-position: top; background-size: contain; display: block; height: 100vh; width:100vw; max-width: 960px; max-height: 450px; margin: 0 auto;}
@@ -75,7 +75,7 @@ html {scroll-behavior: smooth; font-size: 26px; font-family: Arial, Helvetica, s
   border-bottom-color: #D90000 !important; }
 /* End Popover Body */
 .noti-tudo_m {top: 35%; right: 6%;}
-.alert-diemdanh_m {position: absolute !important; left: 32%; top: 8%; width: 155px; font-size:12px}
+.alert-diemdanh_m {position: absolute !important; left: 40%; top: 6%; width: 155px; font-size:12px}
 
 .modal-chonroom_m {background:url(../images/bg-popup-chonroom.png) no-repeat; background-position: top; background-size: 100%; display: block; width: 100%; height: 100%}
 .session-chonroom_m {background-image: url(../images/bg-session-chonroom.png); background-repeat: no-repeat; background-position: top; background-size: 100% 100%; width: 100%; height: 120px; margin: 0 auto;}

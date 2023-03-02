@@ -1231,7 +1231,7 @@ class Lucky_Rotation extends React.Component {
 								<div class="modal-content bg-transparent border-0">
 
 								<div class="modal-body border-0">
-									<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>BẠN ĐÃ HẾT PHI TIÊU.</h2>
+									<h2 class="pt-5 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>Bạn đã hết Phi Tiêu.</h2>
 									<p class="pt-1 font-weight-bold text-uppercase text-center" style={{fontSize:13}}>Vui lòng thực hiện nhiệm vụ điểm danh hàng ngày hoặc mua gói cước truyền hình để nhận phi tiêu và tiếp tục chơi.</p>
 									<p class="text-center"><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
 								</div>

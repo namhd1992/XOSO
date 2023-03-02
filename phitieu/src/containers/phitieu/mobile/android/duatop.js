@@ -62,8 +62,8 @@ var img_h=450;
 var n=0;
 var st_touch={};
 var SEGMENT_COUNT = 20;
-var width = window.screen.width;
-var height = window.screen.height;
+var width = window.innerWidth;
+var height = window.innerHeight;
 var curFrame = 0;
 var frameCount = 13; 
 var spriteWidth = 364; 
@@ -178,7 +178,7 @@ class Lucky_Rotation extends React.Component {
 		}else{
 			this.setState({horizontal: true})
 		}
-		var delta=window.screen.width/img_w;
+		var delta=window.innerWidth/img_w;
 		startX=startX*delta;
 		endX=endX*delta;
 		startY=startY*delta;
@@ -230,7 +230,7 @@ class Lucky_Rotation extends React.Component {
 			var stage = new Konva.Stage({
 				container: 'canvas',
 				width: width,
-				height: height,
+				height: height
 			});
 
 			var layer = new Konva.Layer();
@@ -1147,9 +1147,9 @@ class Lucky_Rotation extends React.Component {
 		const {fullScreen, horizontal, auto_play, msg, sanqua, msg_err, isVideo}=this.state;
 
 		return (
-				<div id="game">
+				<div id="game" style={{height:"100%", backgroundColor:"black"}}>
 					<div>{(horizontal)?(<div>
-						{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
+						{(auto_play)?(<div id="canvas" style={{top:0, left:0, zIndex:99999, backgroundColor:"black"}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
 						<div id="div_checkbox" style={{position:'absolute', top:width_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
 						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
 						<div id="div_fullScreen"></div>
@@ -1182,9 +1182,9 @@ class Lucky_Rotation extends React.Component {
 							<div class="modal-content bg-transparent border-0">
 
 							<div class="modal-body border-0">
-								<h2 class="pt-4 font-weight-bold text-uppercase text-center" style={{fontSize:14}}>Bạn đã hết Phi Tiêu.</h2>
-								<p class="font-weight-bold text-uppercase text-center" style={{fontSize:13}}> Vui lòng nạp thêm Scoin để nhận Phi Tiêu và tiếp tục chơi.</p>
-								<p class="text-center"><a href="https://scoin.vn/" title="Nạp Scoin" target="_blank"><img src={btn_nap_scoin} width="30%" hspace="10" alt="" /></a><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
+								<h2 class="pt-4 font-weight-bold text text-center" style={{fontSize:14}}>Bạn đã hết Phi Tiêu.</h2>
+								<p class="font-weight-bold text-center" style={{fontSize:13}}>Vui lòng thực hiện nhiệm vụ điểm danh hàng ngày hoặc mua gói cước truyền hình để nhận phi tiêu và tiếp tục chơi.</p>
+								<p class="text-center"><a href="/" title="Thoát"><img src={btn_thoat} width="30%" alt="" /></a></p>
 							</div>
 
 							</div>
