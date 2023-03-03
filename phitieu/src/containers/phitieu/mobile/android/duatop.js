@@ -85,6 +85,7 @@ var segment = 0;
 var height_bgImg=0;
 
 var totalScore = 0;
+var mar_l=Math.ceil((window.screen.height - window.innerHeight)/2)
 
 
 
