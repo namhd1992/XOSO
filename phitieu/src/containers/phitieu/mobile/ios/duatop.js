@@ -43,6 +43,7 @@ import rotate from '../images/rotate.png';
 // import bg_page_sanqua from '../images/bg-page-duatop.png';
 import bg_page_duatop from '../images/bg_page_duatop_vtv.png';
 import btn_nap_scoin from '../images/btn-nap-scoin.png';
+import btn_bxh from '../images/btn-bxh.png';
 
 
 
@@ -131,6 +132,7 @@ class Lucky_Rotation extends React.Component {
 			checkboxImg:{},
 			uncheckboxImg:{},
 			exitImg:{},
+			btnBXHImg:{},
 			auto_play:false,
 			orientation:'',
 			dartPositionY:0,
@@ -242,6 +244,13 @@ class Lucky_Rotation extends React.Component {
 				height: 42,
 			});
 			var layer_exit = new Konva.Layer();
+
+			var stage_btn_bxh = new Konva.Stage({
+				container: 'btn_bxh',
+				width: 105,
+				height: 42,
+			});
+			var layer_btn_bxh = new Konva.Layer();
 
 	
 			this.setState({stage:stage, layer:layer})
@@ -429,14 +438,26 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var ds_top = new Konva.Text({
-				x: bg_x*0.78,
-				y: bg_y*0.52,
+				x: bg_x*0.75,
+				y: bg_y*0.51,
 				text:"ĐIỂM CAO NHẤT",
 				fontSize: 15,
 				fontFamily: 'Calibri',
 				fill: 'yellow',
 				width: 300,
 				padding: 20,
+				align: 'left',
+			});
+
+			var hotline_text = new Konva.Text({
+				x: bg_x*0.70,
+				y: bg_y*0.85,
+				text: "HOTLINE: 19001515 - NHÁNH 9",
+				fontSize: 15,
+				fontStyle:"bold",
+				fontFamily: 'Calibri',
+				fill: 'yellow',
+				width: 300,
 				align: 'left',
 			});
 
@@ -459,6 +480,7 @@ class Lucky_Rotation extends React.Component {
 			// layer.add(vip_level);
 			layer.add(tg_conlai);
 			layer.add(auto_text);
+			layer.add(hotline_text);
 			layer.add(tong_diem);
 			layer.add(txt_points);
 			layer.add(ds_top);
@@ -520,6 +542,22 @@ class Lucky_Rotation extends React.Component {
 				_this.setState({exitImg:exitImg})
 			};
 			btnExit.src = btn_thoat;
+
+			var btnBXH = new Image();
+			btnBXH.onload = function () {
+				var btnBXHImg = new Konva.Image({
+					image: btnBXH,
+					x: 0,
+					y: 0,
+					width: 90,
+					height: 35
+				});
+		
+				layer_btn_bxh.add(btnBXHImg);
+				stage_btn_bxh.add(layer_btn_bxh);
+				_this.setState({btnBXHImg:btnBXHImg})
+			};
+			btnBXH.src = btn_bxh;
 
 
 			var btnFullScreen = new Image();
@@ -1059,6 +1097,10 @@ class Lucky_Rotation extends React.Component {
 		window.location.replace("/")
 	}
 
+	gotoBXH=()=>{
+		window.location.replace("/#home")
+	}
+
 
 	showScore=(totalScore)=>{
 		
@@ -1190,6 +1232,7 @@ class Lucky_Rotation extends React.Component {
 						{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999, backgroundColor:'black'}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
 						<div id="div_checkbox" style={{position:'absolute', top:height_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
 						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
+						<div id="btn_bxh" style={{position:'absolute', top:50, left:"87%", zIndex:999999}} onTouchStart={this.gotoBXH}></div>
 
 						<div class="modal fade" id="ModalnoneDuaTop" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>
 							<div class="modal-dialog modal-dangnhap">

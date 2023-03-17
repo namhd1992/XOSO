@@ -23,7 +23,8 @@ import {
 	getInfoDonate,
 	checkRollup,
 	getListSanQua,
-	getDuatopVtvCard
+	getDuatopVtvCard,
+	getVinhDanhDuatopVtvCard
 } from '../../../modules/lucky'
 import {
 	getData
@@ -78,6 +79,9 @@ import btn_vinhdanhsanqua_active from './images/btn-vinhdanhsanqua-active.png';
 import btn_vinhdanhsanqua from './images/btn-vinhdanhsanqua.png';
 import btn_bxhduatop from './images/btn-bxhduatop.png';
 import btn_bxhduatop_active from './images/btn-bxhduatop-active.png';
+
+import btn_vinhdanh_duatop from './images/btn-vinhdanh_duatop.png';
+import btn_vinhdanh_duatop_active from './images/btn-vinhdanh_duatop-active.png';
 import btn_huongdanmuathescoin from './images/btn-huongdanmuathescoin.png';
 import btn_nhanthongbaosukien from './images/btn-nhanthongbaosukien.png';
 import btn_napgame from './images/btn-napgame.png';
@@ -243,7 +247,7 @@ class Lucky_Rotation extends React.Component {
 		// localStorage.setItem("update29", true);
 		// $('#Modalbanner').modal('show');
 		
-		this.getDuatopVtvCard(2,1);
+		this.getDuatopVtvCard(1,1);
 
 
 		if (user !== null) {
@@ -346,7 +350,6 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	
-
 	getDuatopVtvCard=(type, pageNumber)=>{
 		const {limit}=this.state;
 		var offsetVinhDanh=(pageNumber-1)*limit;
@@ -358,8 +361,30 @@ class Lucky_Rotation extends React.Component {
 						var listVinhDanh=data.Data;
 						this.setState({listVinhDanh:data.Data, countVinhDanh:data.Totals})
 					}else{
-						$('#myModal11').modal('show');
-						this.setState({message_error:'Không lấy được dữ liệu bảng vinh danh.'})
+						// $('#myModal11').modal('show');
+						// this.setState({message_error:'Không lấy được dữ liệu bảng vinh danh.'})
+					}
+				}else{
+					$('#myModal12').modal('show');
+					this.setState({server_err:true})
+				}
+			});
+		})
+	}
+
+	getVinhDanhDuatopVtvCard=(type, pageNumber)=>{
+		const {limit}=this.state;
+		var offsetVinhDanh=(pageNumber-1)*limit;
+		this.setState({type:type, listVinhDanh:[], countVinhDanh:0}, ()=>{
+			this.props.getVinhDanhDuatopVtvCard(limit, offsetVinhDanh, type).then(()=>{
+				var data=this.props.dataVinhDanh;
+				if(data!==undefined){
+					if(data.Status===0){
+						var listVinhDanh=data.Data;
+						this.setState({listVinhDanh:data.Data, countVinhDanh:data.Totals})
+					}else{
+						// $('#myModal11').modal('show');
+						// this.setState({message_error:'Không lấy được dữ liệu bảng vinh danh.'})
 					}
 				}else{
 					$('#myModal12').modal('show');
@@ -528,7 +553,11 @@ class Lucky_Rotation extends React.Component {
 
 	handlePageChangeVinhDanh=(type, pageNumber)=> {
 		this.setState({activeVinhDanh: pageNumber},()=>{
-			this.getDuatopVtvCard(type, pageNumber)
+			if(type===1){
+				this.getDuatopVtvCard(type, pageNumber)
+			}else{
+				this.getVinhDanhDuatopVtvCard(type, pageNumber)
+			}
 		})
 
 	}
@@ -641,7 +670,20 @@ class Lucky_Rotation extends React.Component {
 	}
 
 	timeEnd=(time)=>{
+		// var start=time.substring(time.indexOf("(") +1,time.indexOf(")"));
+		// var a = new Date(+start);
+		// // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+		// var year = a.getFullYear();
+		// var m=a.getMonth()+1
+		// var month =m > 9 ? m : `0${m}`;
+		// var date = a.getDate();
+		// var hour = a.getHours() > 9 ? a.getHours() : `0${a.getHours()}`;
+		// var min = a.getMinutes() > 9 ? a.getMinutes() : `0${a.getMinutes()}`;
+		// var sec = a.getSeconds() > 9 ? a.getSeconds() : `0${a.getSeconds()}`;
+		// var s = hour + ':' + min + ':' + sec + " ngày " + date + '/' + month + '/' + year ;
+		// return s;
 		var start=time.substring(time.indexOf("(") +1,time.indexOf(")"));
+		console.log(start)
 		var a = new Date(+start);
 		// var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 		var year = a.getFullYear();
@@ -651,7 +693,7 @@ class Lucky_Rotation extends React.Component {
 		var hour = a.getHours() > 9 ? a.getHours() : `0${a.getHours()}`;
 		var min = a.getMinutes() > 9 ? a.getMinutes() : `0${a.getMinutes()}`;
 		var sec = a.getSeconds() > 9 ? a.getSeconds() : `0${a.getSeconds()}`;
-		var s = hour + ':' + min + ':' + sec + " ngày " + date + '/' + month + '/' + year ;
+		var s = date + '/' + month + '/' + year ;
 		return s;
 	}
 
@@ -734,14 +776,21 @@ class Lucky_Rotation extends React.Component {
 
 								<div class="bxh_m position-relative">
 									<ul class="nav nav-pills_m nav-justified" role="tablist">
-										<li class="nav-item">
+										{/* <li class="nav-item">
 											<a class="nav-link_m btn-bxhduatop_m p-0" ><img src={btn_bxhduatop_active} width="50%" hspace="5" id="image-2" /></a>
+										</li> */}
+										<li class="nav-item">
+											<a class="nav-link btn-bxhduatop_m p-0" onClick={()=>this.getDuatopVtvCard(1,1)}><img src={type===1?btn_bxhduatop_active:btn_bxhduatop} width="340" hspace="5" id="image-2" /></a>
+										</li>
+										<li class="nav-item">
+											<a class="nav-link btn-bxhduatop_m p-0" onClick={()=>this.getVinhDanhDuatopVtvCard(2,1)}><img src={type===2?btn_vinhdanh_duatop_active:btn_vinhdanh_duatop} width="340" hspace="5" id="image-1" /></a>
 										</li>
 									</ul>
 									
 									<div class="tab-content bg-bxh_m">
 										<div id="home" class="tab-pane active pt-3vw_m pb-3">
-											<table class="table table-borderless text-center font-size-3vw_m mb-0" style={{tableLayout: "fixed", borderCollapse: "collapse;", lineHeight: "150%"}}>
+										{(type===1)?(
+											<table class="table table-borderless text-center font-size-3vw_m mb-0" style={{tableLayout: "fixed", borderCollapse: "collapse;", lineHeight: "26px"}}>
 												<thead>
 												<tr class="bg-border-bottom_m">
 													<th class="p-1 bg-border-right_m w-33">Tài khoản</th>
@@ -753,12 +802,32 @@ class Lucky_Rotation extends React.Component {
 													{listVinhDanh.map((obj, key) => (
 														<tr key={key} class="bg-border-bottom_m">
 															<td className="p-0 bg-border-right_m w-33">{obj.Username}</td>
-															<td class="p-0 bg-border-right_m w-33" onMouseOver={this.showTooltip} ><span data-toggle="tooltip" data-placement="bottom" title={obj.TotalPoints}>{obj.TotalPoints}</span></td>
+															<td class="p-0 bg-border-right_m w-33">{obj.TotalPoints}</td>
 															<td className="p-0 w-33 w-33">{obj.Throws}</td>
 														</tr>
 													))}
 												</tbody>
+											</table>):(
+											<table class="table table-borderless text-center font-size-16 mb-0 text-red" style={{tableLayout: "fixed", borderCollapse: "collapse", lineHeight: "26px"}}>
+												<thead>
+													<tr class="bg-border-bottom_m">
+														<th class="p-1 bg-border-right_m w-33">Tài khoản</th>
+														<th class="p-1 bg-border-right_m w-33">Giải thưởng</th>
+														<th class="p-1 w-33">Phiên đua</th>
+													</tr>
+												</thead>
+												<tbody>
+
+													{listVinhDanh.map((obj, key) => (
+														<tr key={key} class="bg-border-bottom_m">
+															<td className="p-0 bg-border-right_m w-33">{obj.Username}</td>
+															<td class="p-0 bg-border-right_m w-33">{obj.AwardName}</td>
+															<td className="p-0 w-33 w-33">{this.timeEnd(obj.SessionStartTime)} - {this.timeEnd(obj.SessionEndTime)}</td>
+														</tr>
+													))}
+												</tbody>
 											</table>
+											)}
 											<div className="pagination justify-content-center pag-custom_m font-size-3vw_m" >
 												<Pagination
 													activePage={activeVinhDanh}
@@ -793,7 +862,7 @@ class Lucky_Rotation extends React.Component {
 									</p>
 								</div>
 								{(showRollup) ? (<div class="alert alert-info alert-diemdanh_m p-1 m-0">
-									<span class="text-blink"><a title="Điểm danh" data-toggle="modal" onClick={this.rollup}>Điểm danh <strong>+ 5 phi tiêu</strong>.</a></span>
+									<span class="text-blink"><a title="Điểm danh" data-toggle="modal" onClick={this.rollup}>Điểm danh <strong>+ 25 phi tiêu</strong>.</a></span>
 								</div>):(<div></div>)}
 								
 								<div class="menu-left_m">
@@ -856,22 +925,22 @@ class Lucky_Rotation extends React.Component {
 							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
 							<div class="col-12 text-center text-brown pt-1">
 								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn btn-warning">Giải nhất</h2> 
-									<p class="font-size-3vw font-weight-bold mb-1">Gối massage G-MINNIE EZ</p>
-									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={goi_massage} alt="" width="30%" /></a></p>              
+									<p class="font-size-3vw font-weight-bold mb-1">Gói quà trị giá 300.000đ</p>
+									{/* <p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={goi_massage} alt="" width="30%" /></a></p>               */}
 								</div>
 							</div>
 							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
 							<div class="col-12 text-center text-brown pt-1">
 								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn text-danger border-danger">Giải nhì</h2> 
-									<p class="font-size-3vw font-weight-bold mb-1">Nồi chiên không dầu 4.5L Sunhouse Mama SHD4086W</p>
-									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={noi_chien_khong_dau} alt="" width="30%" /></a></p>              
+									<p class="font-size-3vw font-weight-bold mb-1">Gói quà trị giá 200.000đ</p>
+									{/* <p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={noi_chien_khong_dau} alt="" width="30%" /></a></p>               */}
 								</div>
 							</div>
 							<div class="row ml-2 mr-0 mb-1 border-giaithuong-e">
 							<div class="col-12 text-center text-brown pt-1">
-								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn text-danger border-danger">Giải ba</h2> 
-									<p class="font-size-3vw font-weight-bold mb-1">Sữa tắm hương nước hoa Adiva Sweet Memories</p>
-									<p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={sua_tam_nuoc_hoa} alt="" width="30%" /></a></p>              
+								<h2 class="font-size-3vw font-weight-bold text-uppercase mb-0 btn text-danger border-danger">50 giải ba</h2> 
+									<p class="font-size-3vw font-weight-bold mb-1">Gói nội dung ON Plus Premium+ trị giá 55.000đ</p>
+									{/* <p class="font-size-3vw font-weight-bold mb-1"><a target="_blank"><img src={sua_tam_nuoc_hoa} alt="" width="30%" /></a></p>               */}
 								</div>
 							</div>
 						</div>
@@ -927,10 +996,10 @@ class Lucky_Rotation extends React.Component {
 										<tbody>
 										<tr>
 											<td class="p-1">Điểm danh</td>
-											<td class="p-1">5</td>
-											<td class="p-1">5</td>
+											<td class="p-1">25</td>
+											<td class="p-1">25</td>
 										</tr>
-										<tr>
+										{/* <tr>
 											<td class="p-1">Khách hàng mới</td>
 											<td class="p-1">10</td>
 											<td class="p-1">10</td>
@@ -949,7 +1018,7 @@ class Lucky_Rotation extends React.Component {
 											<td class="p-1">Khách hàng mua gói cước năm</td>
 											<td class="p-1">100</td>
 											<td class="p-1">100</td>
-										</tr>
+										</tr> */}
 										
 										</tbody>
 										</table>
@@ -1118,7 +1187,8 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 	getInfoDonate,
 	checkRollup,
 	getListSanQua,
-	getDuatopVtvCard
+	getDuatopVtvCard,
+	getVinhDanhDuatopVtvCard
 }, dispatch)
 
 

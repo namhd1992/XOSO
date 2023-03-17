@@ -539,7 +539,8 @@ export const getDuatopVtvCard = (limit, offset, type) => {
 		dispatch({
 			type: LUCKY_REQUEST
 		})
-		var url = Ultilities.base_url() + "darts/award-table-vtvcab/?type="+type+"&limit=" + limit + "&offset=" + offset;
+		var url = Ultilities.base_url() + "darts/session-ranking-vtvcab/?type="+type+"&limit=" + limit + "&offset=" + offset;
+		// var url = Ultilities.base_url() + "darts/session-ranking-vtvcab/";
 		return axios.get(url, header).then(function (response) {
 			dispatch({
 				type: LUCKY_VINH_DANH,
@@ -552,6 +553,35 @@ export const getDuatopVtvCard = (limit, offset, type) => {
 		})
 	}
 }
+
+export const getVinhDanhDuatopVtvCard = (limit, offset, type) => {
+	var header = {
+		headers: {
+			"Content-Type": "application/json",
+			// "token": token,
+		}
+	}
+	return dispatch => {
+		dispatch({
+			type: LUCKY_REQUEST
+		})
+		var url = Ultilities.base_url() + "darts/award-table-vtvcab/?type="+type+"&limit=" + limit + "&offset=" + offset;
+		// var url = Ultilities.base_url() + "darts/award-table-vtvcab/";
+		return axios.get(url, header).then(function (response) {
+			dispatch({
+				type: LUCKY_VINH_DANH,
+				data: response.data
+			})
+		}).catch(function (error) {
+			dispatch({
+				type: SERVER_ERROR
+			})
+		})
+	}
+}
+
+
+
 
 export const getTuDo = (token, limit, offset) => {
 	var header = {

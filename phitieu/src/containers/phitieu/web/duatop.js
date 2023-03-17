@@ -32,6 +32,7 @@ import img_checkbox_checked from './images/img-checkbox-checked.png';
 import btn_thoat from './images/btn-thoat.png';
 import btn_sanqua from './images/btn-sanqua.png';
 import btn_nap_scoin from './images/btn-nap-scoin.png';
+import btn_bxh from './images/btn_bxh.png';
 
 import $ from 'jquery';
 import 'bootstrap';
@@ -117,6 +118,7 @@ class Lucky_Rotation extends React.Component {
 			checkboxImg:{},
 			uncheckboxImg:{},
 			exitImg:{},
+			btnBXHImg:{},
 			auto_play:false,
 			orientation:'',
 			dartPositionY:0,
@@ -189,6 +191,13 @@ class Lucky_Rotation extends React.Component {
 			height: 42,
 		});
 		var layer_exit = new Konva.Layer();
+
+		var stage_btn_bxh = new Konva.Stage({
+			container: 'btn_bxh',
+			width: 105,
+			height: 42,
+		});
+		var layer_btn_bxh = new Konva.Layer();
 
 		this.setState({stage:stage, layer:layer})
 		var _this=this
@@ -275,6 +284,22 @@ class Lucky_Rotation extends React.Component {
 			_this.setState({exitImg:exitImg})
 		};
 		btnExit.src = btn_thoat;
+
+		var btnBXH = new Image();
+		btnBXH.onload = function () {
+			var btnBXHImg = new Konva.Image({
+				image: btnBXH,
+				x: 0,
+				y: 0,
+				width: 100,
+				height: 35
+			});
+	
+			layer_btn_bxh.add(btnBXHImg);
+			stage_btn_bxh.add(layer_btn_bxh);
+			_this.setState({btnBXHImg:btnBXHImg})
+		};
+		btnBXH.src = btn_bxh;
 
 
 		var user = JSON.parse(localStorage.getItem("user"));
@@ -746,6 +771,10 @@ class Lucky_Rotation extends React.Component {
 		window.location.replace("/")
 	}
 
+	gotoBXH=()=>{
+		window.location.replace("/#home")
+	}
+
 	showScore=(totalScore)=>{
 		
 		var score=totalScore>9?totalScore:'0'+totalScore;
@@ -855,10 +884,17 @@ class Lucky_Rotation extends React.Component {
 			<h2 class="font-size-16 text-uppercase font-weight-bold text-center mb-1 text-shadow">Điểm cao nhất</h2>
 			<h4 class="font-size-18 text-uppercase text-center text-shadow">{highestPoints}</h4>
 		</div>
+
+		<div class="hotline">
+			<h2 class="font-size-16 text-uppercase font-weight-bold text-center mb-1 text-shadow">Hotline: 19001515 - nhánh 9</h2>
+		</div>
+
+
 		{(auto_play)?(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}} onMouseDown={this.touchStart} onMouseUp={this.touchEnd} onMouseMove={this.touchMove}></div>)}
 					
 		<div id="div_checkbox" style={{position:'absolute', top:"90%", left:"37%", zIndex:999999}} onMouseDown={this.check_auto}></div>
 		<div id="div_exit" style={{position:'absolute', top:0, left:"83%", zIndex:999999}} onMouseDown={this.exit}></div>
+		<div id="btn_bxh" style={{position:'absolute', top:50, left:"83%", zIndex:999999}} onMouseDown={this.gotoBXH}></div>
 		
 		{/* <!-- The Modal Thông báo--> */}
 		<div class="modal fade" id="ModalnoneDuaTop" data-keyboard="false" data-backdrop="static" style={{zIndex:9999999}}>

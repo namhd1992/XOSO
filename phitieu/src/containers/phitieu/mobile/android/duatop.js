@@ -41,6 +41,7 @@ import btn_sanqua from '../images/btn-sanqua.png';
 import btn_duatop from '../images/btn-duatop.png';
 import rotate from '../images/rotate.png';
 import btn_nap_scoin from '../images/btn-nap-scoin.png';
+import btn_bxh from '../images/btn-bxh.png';
 
 // import bg_page_duatop from '../images/bg-page-duatop.png';
 import bg_page_duatop from '../images/bg_page_duatop_vtv.png';
@@ -131,6 +132,7 @@ class Lucky_Rotation extends React.Component {
 			checkboxImg:{},
 			uncheckboxImg:{},
 			exitImg:{},
+			btnBXHImg:{},
 			auto_play:false,
 			orientation:'',
 			dartPositionY:0,
@@ -244,6 +246,13 @@ class Lucky_Rotation extends React.Component {
 				height: 42,
 			});
 			var layer_exit = new Konva.Layer();
+
+			var stage_btn_bxh = new Konva.Stage({
+				container: 'btn_bxh',
+				width: 105,
+				height: 42,
+			});
+			var layer_btn_bxh = new Konva.Layer();
 
 			var stage_full = new Konva.Stage({
 				container: 'div_fullScreen',
@@ -406,6 +415,19 @@ class Lucky_Rotation extends React.Component {
 				align: 'left',
 			});
 
+			var hotline_text = new Konva.Text({
+				x: bg_x*0.70,
+				y: bg_y*0.85,
+				text: "HOTLINE: 19001515 - NHÁNH 9",
+				fontSize: 15,
+				fontStyle:"bold",
+				fontFamily: 'Calibri',
+				fill: 'yellow',
+				width: 300,
+				align: 'left',
+			});
+
+
 			var tong_diem = new Konva.Text({
 				x: bg_x*0.12,
 				y: bg_y*0.52,
@@ -433,8 +455,8 @@ class Lucky_Rotation extends React.Component {
 			});
 
 			var ds_top = new Konva.Text({
-				x: bg_x*0.78,
-				y: bg_y*0.52,
+				x: bg_x*0.75,
+				y: bg_y*0.51,
 				text:"ĐIỂM CAO NHẤT",
 				fontSize: 15,
 				fontFamily: 'Calibri',
@@ -467,6 +489,7 @@ class Lucky_Rotation extends React.Component {
 			layer.add(tg_conlai);
 			layer.add(auto_text);
 			layer.add(tong_diem);
+			layer.add(hotline_text);
 			layer.add(txt_points);
 			layer.add(ds_top);
 			layer.add(hight_score);
@@ -528,6 +551,22 @@ class Lucky_Rotation extends React.Component {
 				_this.setState({exitImg:exitImg})
 			};
 			btnExit.src = btn_thoat;
+
+			var btnBXH = new Image();
+			btnBXH.onload = function () {
+				var btnBXHImg = new Konva.Image({
+					image: btnBXH,
+					x: 0,
+					y: 0,
+					width: 90,
+					height: 35
+				});
+		
+				layer_btn_bxh.add(btnBXHImg);
+				stage_btn_bxh.add(layer_btn_bxh);
+				_this.setState({btnBXHImg:btnBXHImg})
+			};
+			btnBXH.src = btn_bxh;
 
 
 			var btnFullScreen = new Image();
@@ -1060,6 +1099,10 @@ class Lucky_Rotation extends React.Component {
 		window.location.replace("/")
 	}
 
+	gotoBXH=()=>{
+		window.location.replace("/#home")
+	}
+
 	openFullScreen=()=>{
 		this.toggleFullScreen();
 
@@ -1148,6 +1191,7 @@ class Lucky_Rotation extends React.Component {
 						{(auto_play)?(<div id="canvas" style={{top:0, left:0, zIndex:99999, backgroundColor:"black"}}></div>):(<div id="canvas" style={{position:'absolute', top:0, left:0, zIndex:99999}} onTouchStart={(e) =>this.touchStart(e)} onTouchEnd={(e)=>this.touchEnd(e)} onTouchMove={(e)=>this.touchMove(e)}></div>)}
 						<div id="div_checkbox" style={{position:'absolute', top:height_bgImg*0.83, left:"1%", zIndex:999999}} onTouchStart={this.check_auto}></div>
 						<div id="div_exit" style={{position:'absolute', top:0, left:"87%", zIndex:999999}} onTouchStart={this.exit}></div>
+						<div id="btn_bxh" style={{position:'absolute', top:50, left:"87%", zIndex:999999}} onTouchStart={this.gotoBXH}></div>
 						<div id="div_fullScreen"></div>
 						</div>):(<div>
 						<img src={rotate} width="100%" alt="" />
